@@ -1,14 +1,62 @@
 {
-  "name": "video_player",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
+  "name": "video-player",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "./",
+  "main": "src/start.js",
+  "build": {
+    "appId": "app.id",
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "category": "your.app.category.type",
+      "iconUrl": "path-to-icon.png"
+    },
+    "mac": {
+      "category": "your.app.category.type",
+      "iconUrl": "path-to-icon.png"
+    }
   },
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "cross-env": "^7.0.2",
+    "electron": "^8.3.0",
+    "electron-is-dev": "^1.2.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "cross-env NODE_ENV=dev nodemon --watch ./src/start.js --exec \"\"electron .\"\"",
+    "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && npm run electron\""
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "devDependencies": {
-    "electron": "^8.3.0"
+    "concurrently": "^5.2.0",
+    "electron-builder": "^22.6.0",
+    "electron-reload": "^1.5.0",
+    "nodemon": "^2.0.4",
+    "wait-on": "^5.0.0"
   }
 }
