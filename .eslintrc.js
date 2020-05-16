@@ -25,6 +25,7 @@ module.exports = {
   ],
   rules: {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "linebreak-style": ["error", process.env.NODE_ENV === 'prod' ? "unix" : "windows"]
+    "linebreak-style": ["error", process.env.NODE_ENV === 'prod' ? "unix" : "windows"],
+    "no-use-before-define": ["error", { "variables": false, "functions": false, "classes": false }]
   },
 };

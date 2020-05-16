@@ -9,6 +9,7 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      webSecurity: false,
     },
   });
 
@@ -19,6 +20,7 @@ function createWindow() {
   );
 
   win.removeMenu();
+  win.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
