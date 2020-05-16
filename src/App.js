@@ -1,25 +1,43 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './App.css';
 
 
 const { dialog } = window.require('electron').remote;
 
+// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
 function App() {
   const [currentVideoPath, setCurrentVideoPath] = useState('');
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
+  const videoPlayerRefContainer = useRef(null);
+
   const onVideoSelect = async () => {
     const allowedFormats = [
       { name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] },
     ];
-
     const files = await dialog.showOpenDialog({ filters: allowedFormats, properties: ['openFile'] });
     setCurrentVideoPath(files.filePaths[0]);
+  };
+
+  const onPlayButtonClicked = () => {
+    setIsVideoPlaying(!isVideoPlaying);
+    if (isVideoPlaying) {
+      videoPlayerRefContainer.current.pause();
+    } else {
+      videoPlayerRefContainer.current.play();
+    }
   };
 
   return (
     <div style={styles.container}>
       <button type="submit" onClick={onVideoSelect}>Select video</button>
-      <video src={currentVideoPath} type="video/mp4" style={styles.video} />
+      <video ref={videoPlayerRefContainer} src={currentVideoPath} type="video/mp4" style={styles.video} />
+      <button type="submit" onClick={onPlayButtonClicked}>
+        {
+          isVideoPlaying ? 'Pause' : 'Play'
+        }
+      </button>
     </div>
   );
 }
