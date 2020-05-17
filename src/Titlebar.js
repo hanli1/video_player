@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import WindowButton from './WindowButton';
+import { getImagePath } from './Utils';
 
 const { remote } = window.require('electron');
 
@@ -78,8 +79,6 @@ function Titlebar({ titleText }) {
     )
   );
 }
-
-const getImagePath = (imagePath) => process.env.PUBLIC_URL + imagePath;
 
 function getSrcSetForButton(name) {
   const w10 = getImagePath(`/windowsIcons/${name}-w-10.png`);

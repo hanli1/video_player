@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
+import { getImagePath } from './Utils';
 
 const { remote } = window.require('electron');
 
@@ -144,12 +145,21 @@ function MediaControl({
           </div>
         </AnimateHeight>
         <div>
-          <button type="submit" onClick={onPlayButtonClicked}>
-            {
-             videoRef.current && !videoRef.current.paused ? 'Pause' : 'Play'
-            }
-          </button>
-          <button type="submit" onClick={onVideoSelect}>Select video</button>
+          {
+            videoRef.current && !videoRef.current.paused
+              ? (
+                <div style={styles.mediaControlButton} onClick={onPlayButtonClicked}>
+                  <img src={getImagePath('/pausebutton.png')} style={styles.mediaControlButtonImage} />
+                </div>
+              ) : (
+                <div style={styles.mediaControlButton} onClick={onPlayButtonClicked}>
+                  <img src={getImagePath('/playbutton.png')} style={styles.mediaControlButtonImage} />
+                </div>
+              )
+          }
+          <div style={styles.mediaControlButton} onClick={onVideoSelect}>
+            <img src={getImagePath('/selectfilebutton.png')} style={styles.mediaControlButtonImage} />
+          </div>
         </div>
       </div>
     </div>
@@ -195,6 +205,19 @@ const styles = {
   },
   mouseListenerLayerActive: {
     pointerEvents: 'auto',
+  },
+  mediaControlButton: {
+    backgroundColor: 'transparent',
+    padding: 8,
+    margin: 4,
+    display: 'inline-block',
+    cursor: 'pointer',
+    height: 30,
+  },
+  mediaControlButtonImage: {
+    width: 30,
+    maxHeight: '100%',
+    filter: 'invert(100%)',
   },
 };
 
