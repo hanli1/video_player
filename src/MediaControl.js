@@ -41,7 +41,7 @@ function MediaControl({
   );
 
   const seekTo = (seekToVideoPercentage) => {
-    if (videoRef.current.currentSrc !== '') {
+    if (videoRef.current.currentSrc !== '' && !videoRef.current.seeking) {
       videoRef.current.currentTime = (seekToVideoPercentage / 100 * videoRef.current.duration);
     }
   };
