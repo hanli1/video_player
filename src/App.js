@@ -5,6 +5,7 @@ import Titlebar from './Titlebar';
 
 
 const { dialog } = window.require('electron').remote;
+const { basename } = window.require('path');
 
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
 function App() {
@@ -33,7 +34,7 @@ function App() {
   return (
     <>
       <div style={styles.container}>
-        <Titlebar titleText={currentVideoPath === null ? 'Video Player' : currentVideoPath} />
+        <Titlebar titleText={currentVideoPath === null ? 'Video Player' : basename(currentVideoPath)} />
         <button type="submit" onClick={onVideoSelect}>Select video</button>
         <video ref={videoPlayerRefContainer} src={currentVideoPath} type="video/mp4" style={styles.video} />
         <button type="submit" onClick={onPlayButtonClicked}>

@@ -102,7 +102,7 @@ const styles = {
     backgroundColor: 'grey',
   },
   draggableRegion: {
-    webkitAppRegion: 'drag',
+    WebkitAppRegion: 'drag',
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'row',
@@ -124,7 +124,7 @@ const styles = {
   },
   windowButtonGroup: {
     marginRight: -4,
-    webkitAppRegion: 'no-drag',
+    WebkitAppRegion: 'no-drag',
     flexDirection: 'row',
     display: 'flex',
   },

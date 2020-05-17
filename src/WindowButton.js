@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
@@ -7,8 +8,8 @@ import PropTypes from 'prop-types';
 
 WindowButton.propTypes = {
   srcSet: PropTypes.string.isRequired,
-  onHoverStyle: PropTypes.shape.isRequired,
-  onActiveStyle: PropTypes.shape.isRequired,
+  onHoverStyle: PropTypes.object.isRequired,
+  onActiveStyle: PropTypes.object.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
