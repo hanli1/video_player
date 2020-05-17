@@ -5,6 +5,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import AnimateHeight from 'react-animate-height';
 
 MediaControl.propTypes = {
   videoRef: PropTypes.object.isRequired,
@@ -69,36 +70,37 @@ function MediaControl({
             setIsUserSeeking(false);
           }}
         />
-        <div
-          style={{ ...styles.progressBar, ...{ height: progressBarHeight } }}
-          onMouseOver={() => {
-            setIsMouseInProgressBar(true);
-            setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
-          }}
-          onMouseOut={() => {
-            setIsMouseInProgressBar(false);
-            setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
-          }}
-          onMouseDown={(e) => {
-            setIsUserSeeking(true);
-            seekTo(mouseEventToVideoPercentage(e));
-          }}
-          onMouseMove={(e) => {
-            if (isUserSeeking) {
+        <AnimateHeight duration={250} height={progressBarHeight}>
+          <div
+            style={styles.progressBar}
+            onMouseOver={() => {
+              setIsMouseInProgressBar(true);
+              setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
+            }}
+            onMouseOut={() => {
+              setIsMouseInProgressBar(false);
+              setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
+            }}
+            onMouseDown={(e) => {
+              setIsUserSeeking(true);
               seekTo(mouseEventToVideoPercentage(e));
-            }
-          }}
-          onMouseUp={() => {
-            setIsUserSeeking(false);
-          }}
-        >
-          <div style={{
-            ...styles.currentProgressBar,
-            ...{ height: progressBarHeight },
-            ...{ width: `${currentProgressPercentage}%` },
-          }}
-          />
-        </div>
+            }}
+            onMouseMove={(e) => {
+              if (isUserSeeking) {
+                seekTo(mouseEventToVideoPercentage(e));
+              }
+            }}
+            onMouseUp={() => {
+              setIsUserSeeking(false);
+            }}
+          >
+            <div style={{
+              ...styles.currentProgressBar,
+              ...{ width: `${currentProgressPercentage}%` },
+            }}
+            />
+          </div>
+        </AnimateHeight>
         <div>
           <button type="submit" onClick={onPlayButtonClicked}>
             {
@@ -122,12 +124,14 @@ const styles = {
     WebkitAppRegion: 'no-drag',
   },
   currentProgressBar: {
+    height: HOVER_SEEK_PROGRESS_BAR_HEIGHT,
     width: '50%',
     backgroundColor: '#7CB518',
     userDrag: 'none',
     userSelect: 'none',
   },
   progressBar: {
+    height: HOVER_SEEK_PROGRESS_BAR_HEIGHT,
     width: '100%',
     backgroundColor: '#8F8389',
     zIndex: 100, // put above mouse listening zone so no visual glitch on click seek
