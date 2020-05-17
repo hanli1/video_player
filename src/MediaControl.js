@@ -88,6 +88,9 @@ function MediaControl({
               seekTo(mouseEventToVideoPercentage(e));
             }
           }}
+          onMouseUp={() => {
+            setIsUserSeeking(false);
+          }}
         >
           <div style={{
             ...styles.currentProgressBar,
@@ -121,11 +124,15 @@ const styles = {
   currentProgressBar: {
     width: '50%',
     backgroundColor: '#7CB518',
+    userDrag: 'none',
+    userSelect: 'none',
   },
   progressBar: {
     width: '100%',
     backgroundColor: '#8F8389',
     zIndex: 100, // put above mouse listening zone so no visual glitch on click seek
+    userDrag: 'none',
+    userSelect: 'none',
   },
   mouseListenerLayer: {
     width: '100%',
