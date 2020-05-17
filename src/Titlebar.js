@@ -1,8 +1,16 @@
+/* eslint-disable jsx-a11y/mouse-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
+
+const { remote } = window.require('electron');
 
 function Titlebar() {
   const [hoveredButton, setHoveredButton] = useState('');
+  const [activeButton, setActiveButton] = useState('');
+
+  const window = remote.getCurrentWindow();
+
   const getImagePath = (imagePath) => process.env.PUBLIC_URL + imagePath;
 
   const closeW10 = getImagePath('/windowsIcons/close-w-10.png');
@@ -12,12 +20,27 @@ function Titlebar() {
   const closeW24 = getImagePath('/windowsIcons/close-w-24.png');
   const closeW30 = getImagePath('/windowsIcons/close-w-30.png');
 
+  const clearAllButtons = () => {
+    setHoveredButton('');
+    setActiveButton('');
+  };
   return (
     <div style={styles.container}>
       <div style={styles.draggableRegion}>
         <div style={styles.titleText}>Video Player</div>
         <div style={styles.windowButtonGroup}>
-          <div style={{ ...styles.windowButton, ...hoveredButton === 'close' ? styles.closeButtonHover : {} }} onMouseOver={() => setHoveredButton('close')} onMouseOut={() => setHoveredButton('')}>
+          <div
+            style={{
+              ...styles.windowButton,
+              ...hoveredButton === 'close' ? styles.closeButtonHover : {},
+              ...activeButton === 'close' ? styles.closeButtonActive : {},
+            }}
+            onMouseOver={() => setHoveredButton('close')}
+            onMouseOut={clearAllButtons}
+            onMouseDown={() => setActiveButton('close')}
+            onMouseUp={clearAllButtons}
+            onClick={() => { window.close(); }}
+          >
             <img
               style={styles.windowButtonImage}
               className="icon"
@@ -35,13 +58,17 @@ function Titlebar() {
 }
 
 const styles = {
+  closeButtonActive: {
+    backgroundColor: '#F1707A',
+  },
   closeButtonHover: {
-    backgroundColor: 'red',
+    backgroundColor: '#E81123',
   },
   container: {
     height: 32,
+    width: '100%',
     display: 'flex',
-    backgroundColor: 'red',
+    backgroundColor: 'grey',
   },
   draggableRegion: {
     webkitAppRegion: 'drag',
@@ -54,8 +81,7 @@ const styles = {
   windowButton: {
     width: 48,
     height: 32,
-    // alignSelf: 'stretch',
-    backgroundColor: 'black',
+    userSelect: 'none',
     alignItems: 'center',
     display: 'flex',
     justifyContent: 'center',

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import React, { useState, useRef } from 'react';
 import './App.css';
-import Titlebar from './Titlebar.js';
+import Titlebar from './Titlebar';
 
 
 const { dialog } = window.require('electron').remote;
@@ -32,8 +32,8 @@ function App() {
 
   return (
     <>
-      <Titlebar />
       <div style={styles.container}>
+        <Titlebar />
         <button type="submit" onClick={onVideoSelect}>Select video</button>
         <video ref={videoPlayerRefContainer} src={currentVideoPath} type="video/mp4" style={styles.video} />
         <button type="submit" onClick={onPlayButtonClicked}>
