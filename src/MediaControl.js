@@ -50,25 +50,25 @@ function MediaControl({
 
   return (
     <>
-      <div
-        style={{
-          ...styles.mouseListenerLayer,
-          ...isUserSeeking ? styles.mouseListenerLayerActive : {},
-        }}
-        onMouseMove={(e) => {
-          if (isUserSeeking) {
-            setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
-            seekTo(mouseEventToVideoPercentage(e));
-          }
-        }}
-        onMouseUp={() => {
-          if (!isMouseInProgressBar) {
-            setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
-          }
-          setIsUserSeeking(false);
-        }}
-      />
       <div style={styles.container}>
+        <div
+          style={{
+            ...styles.mouseListenerLayer,
+            ...isUserSeeking ? styles.mouseListenerLayerActive : {},
+          }}
+          onMouseMove={(e) => {
+            if (isUserSeeking) {
+              setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
+              seekTo(mouseEventToVideoPercentage(e));
+            }
+          }}
+          onMouseUp={() => {
+            if (!isMouseInProgressBar) {
+              setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
+            }
+            setIsUserSeeking(false);
+          }}
+        />
         <div
           style={{ ...styles.progressBar, ...{ height: progressBarHeight } }}
           onMouseOver={() => {
@@ -113,7 +113,7 @@ function MediaControl({
 
 const styles = {
   container: {
-    position: 'absolute',
+    position: 'fixed',
     left: 0,
     bottom: 0,
     display: 'flex',
@@ -137,7 +137,7 @@ const styles = {
   mouseListenerLayer: {
     width: '100%',
     height: '100%',
-    position: 'absolute',
+    position: 'fixed',
     top: 0,
     left: 0,
     pointerEvents: 'none',
