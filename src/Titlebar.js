@@ -108,7 +108,7 @@ const styles = {
     height: 32,
     width: '100%',
     display: 'flex',
-    backgroundColor: 'grey',
+    backgroundColor: 'black',
   },
   draggableRegion: {
     WebkitAppRegion: 'drag',

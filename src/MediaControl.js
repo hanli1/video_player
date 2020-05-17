@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 
@@ -11,6 +11,7 @@ const { remote } = window.require('electron');
 
 MediaControl.propTypes = {
   videoRef: PropTypes.object.isRequired,
+  onVideoSelect: PropTypes.func.isRequired,
 };
 
 const NORMAL_PROGRESS_BAR_HEIGHT = 5;
@@ -18,11 +19,14 @@ const HOVER_SEEK_PROGRESS_BAR_HEIGHT = 10;
 
 function MediaControl({
   videoRef,
+  onVideoSelect,
 }) {
   const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
   const [isUserSeeking, setIsUserSeeking] = useState(false);
   const [progressBarHeight, setProgressBarHeight] = useState(NORMAL_PROGRESS_BAR_HEIGHT);
   const [isMouseInProgressBar, setIsMouseInProgressBar] = useState(false);
+
+  const progressBarRef = useRef(null);
 
   const onPlayButtonClicked = () => {
     if (videoRef.current.paused) {
@@ -47,7 +51,12 @@ function MediaControl({
     }
   };
 
-  const mouseEventToVideoPercentage = (e) => e.nativeEvent.offsetX / e.currentTarget.getBoundingClientRect().width * 100;
+  const progressBarMouseEventToVideoPercentage = (e) => e.nativeEvent.offsetX / e.currentTarget.getBoundingClientRect().width * 100;
+  const areaListenerMouseEventToVideoPercentage = (e) => {
+    const progressBarX = progressBarRef.current.getBoundingClientRect().x;
+    const percentage = Math.max(e.nativeEvent.offsetX - progressBarX, 0) / progressBarRef.current.getBoundingClientRect().width * 100;
+    return Math.min(percentage, 100);
+  };
 
 
   useEffect(() => {
@@ -81,8 +90,9 @@ function MediaControl({
   }, []);
 
   return (
-    <>
-      <div style={styles.container}>
+    <div style={styles.container}>
+      <div style={styles.styleContainer}>
+
         <div
           style={{
             ...styles.mouseListenerLayer,
@@ -91,7 +101,7 @@ function MediaControl({
           onMouseMove={(e) => {
             if (isUserSeeking) {
               setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
-              seekTo(mouseEventToVideoPercentage(e));
+              seekTo(areaListenerMouseEventToVideoPercentage(e));
             }
           }}
           onMouseUp={() => {
@@ -103,6 +113,7 @@ function MediaControl({
         />
         <AnimateHeight duration={250} height={progressBarHeight}>
           <div
+            ref={progressBarRef}
             style={styles.progressBar}
             onMouseOver={() => {
               setIsMouseInProgressBar(true);
@@ -114,11 +125,11 @@ function MediaControl({
             }}
             onMouseDown={(e) => {
               setIsUserSeeking(true);
-              seekTo(mouseEventToVideoPercentage(e));
+              seekTo(progressBarMouseEventToVideoPercentage(e));
             }}
             onMouseMove={(e) => {
               if (isUserSeeking) {
-                seekTo(mouseEventToVideoPercentage(e));
+                seekTo(progressBarMouseEventToVideoPercentage(e));
               }
             }}
             onMouseUp={() => {
@@ -138,21 +149,26 @@ function MediaControl({
              videoRef.current && !videoRef.current.paused ? 'Pause' : 'Play'
             }
           </button>
+          <button type="submit" onClick={onVideoSelect}>Select video</button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
 const styles = {
   container: {
     position: 'fixed',
-    left: 0,
     bottom: 0,
+    left: 0,
+    right: 0,
     display: 'flex',
     flexDirection: 'column',
-    width: '100%',
     WebkitAppRegion: 'no-drag',
+    width: '100%',
+  },
+  styleContainer: {
+    margin: 20,
   },
   currentProgressBar: {
     height: HOVER_SEEK_PROGRESS_BAR_HEIGHT,
