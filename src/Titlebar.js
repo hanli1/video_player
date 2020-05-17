@@ -21,7 +21,11 @@ function Titlebar({ titleText }) {
 
   return (
     <div style={styles.container}>
-      <div style={styles.draggableRegion}>
+      <div style={{
+        ...styles.draggableRegion,
+        ...isMaximized ? styles.draggableRegionMaximized : styles.draggableRegionNotMaximized,
+      }}
+      >
         <div style={styles.titleText}>{titleText}</div>
         <div style={styles.windowButtonGroup}>
           <WindowButton
@@ -93,11 +97,16 @@ const styles = {
   },
   draggableRegion: {
     webkitAppRegion: 'drag',
-    margin: 4,
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  draggableRegionNotMaximized: {
+    margin: 4,
+  },
+  draggableRegionMaximized: {
+    margin: 0,
   },
   windowButton: {
     width: 48,
