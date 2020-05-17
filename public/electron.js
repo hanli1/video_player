@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev');
-// require('electron-reload')
+const path = require('path');
 
 function createWindow() {
   // Create the browser window.
@@ -22,7 +22,10 @@ function createWindow() {
   );
 
   win.removeMenu();
-  win.webContents.openDevTools();
+
+  if (isDev) {
+    win.webContents.openDevTools();
+  }
 }
 
 // This method will be called when Electron has finished
