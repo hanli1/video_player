@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import WindowButton from './WindowButton';
@@ -11,16 +11,13 @@ Titlebar.propTypes = {
 
 function Titlebar({ titleText }) {
   const window = remote.getCurrentWindow();
+  const [isMaximized, setIsMaximized] = useState(window.isMaximized());
 
-  const getImagePath = (imagePath) => process.env.PUBLIC_URL + imagePath;
-
-  const closeW10 = getImagePath('/windowsIcons/close-w-10.png');
-  const closeW12 = getImagePath('/windowsIcons/close-w-12.png');
-  const closeW15 = getImagePath('/windowsIcons/close-w-15.png');
-  const closeW20 = getImagePath('/windowsIcons/close-w-20.png');
-  const closeW24 = getImagePath('/windowsIcons/close-w-24.png');
-  const closeW30 = getImagePath('/windowsIcons/close-w-30.png');
-  const closeButtonSrcSet = `${closeW10} 1x, ${closeW12} 1.25x, ${closeW15} 1.5x, ${closeW15} 1.75x, ${closeW20} 2x, ${closeW20} 2.25x, ${closeW24} 2.5x, ${closeW30} 3x, ${closeW20} 3.5x`;
+  useEffect(() => {
+    window.addListener('resize', () => {
+      setIsMaximized(window.isMaximized);
+    });
+  });
 
   return (
     <div style={styles.container}>
@@ -28,10 +25,40 @@ function Titlebar({ titleText }) {
         <div style={styles.titleText}>{titleText}</div>
         <div style={styles.windowButtonGroup}>
           <WindowButton
-            srcSet={closeButtonSrcSet}
+            srcSet={getSrcSetForButton('min')}
             onHoverStyle={styles.closeButtonHover}
             onActiveStyle={styles.closeButtonActive}
             onClick={() => window.minimize()}
+          />
+          {
+            isMaximized
+              ? (
+                <WindowButton
+                  srcSet={getSrcSetForButton('restore')}
+                  onHoverStyle={styles.closeButtonHover}
+                  onActiveStyle={styles.closeButtonActive}
+                  onClick={() => {
+                    window.unmaximize();
+                    setIsMaximized(false);
+                  }}
+                />
+              ) : (
+                <WindowButton
+                  srcSet={getSrcSetForButton('max')}
+                  onHoverStyle={styles.closeButtonHover}
+                  onActiveStyle={styles.closeButtonActive}
+                  onClick={() => {
+                    window.maximize();
+                    setIsMaximized(true);
+                  }}
+                />
+              )
+          }
+          <WindowButton
+            srcSet={getSrcSetForButton('close')}
+            onHoverStyle={styles.closeButtonHover}
+            onActiveStyle={styles.closeButtonActive}
+            onClick={() => window.close()}
           />
         </div>
       </div>
@@ -39,6 +66,18 @@ function Titlebar({ titleText }) {
   );
 }
 
+const getImagePath = (imagePath) => process.env.PUBLIC_URL + imagePath;
+
+function getSrcSetForButton(name) {
+  const w10 = getImagePath(`/windowsIcons/${name}-w-10.png`);
+  const w12 = getImagePath(`/windowsIcons/${name}-w-12.png`);
+  const w15 = getImagePath(`/windowsIcons/${name}-w-15.png`);
+  const w20 = getImagePath(`/windowsIcons/${name}-w-20.png`);
+  const w24 = getImagePath(`/windowsIcons/${name}-w-24.png`);
+  const w30 = getImagePath(`/windowsIcons/${name}-w-30.png`);
+
+  return `${w10} 1x, ${w12} 1.25x, ${w15} 1.5x, ${w15} 1.75x, ${w20} 2x, ${w20} 2.25x, ${w24} 2.5x, ${w30} 3x, ${w20} 3.5x`;
+}
 const styles = {
   closeButtonActive: {
     backgroundColor: '#F1707A',
@@ -71,6 +110,8 @@ const styles = {
   windowButtonGroup: {
     marginRight: -4,
     webkitAppRegion: 'no-drag',
+    flexDirection: 'row',
+    display: 'flex',
   },
   windowButtonImage: {
     height: 'auto',
