@@ -12,14 +12,22 @@ Titlebar.propTypes = {
 function Titlebar({ titleText }) {
   const window = remote.getCurrentWindow();
   const [isMaximized, setIsMaximized] = useState(window.isMaximized());
+  const [isFullScreen, setIsFullScreen] = useState(window.isFullScreen());
 
   useEffect(() => {
     window.addListener('resize', () => {
       setIsMaximized(window.isMaximized);
     });
-  });
+    window.addListener('enter-full-screen', () => {
+      setIsFullScreen(window.isFullScreen);
+    });
+    window.addListener('leave-full-screen', () => {
+      setIsFullScreen(window.isFullScreen);
+    });
+  }, []);
 
-  return (
+  return (!isFullScreen
+    && (
     <div style={styles.container}>
       <div style={{
         ...styles.draggableRegion,
@@ -67,6 +75,7 @@ function Titlebar({ titleText }) {
         </div>
       </div>
     </div>
+    )
   );
 }
 

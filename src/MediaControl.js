@@ -7,6 +7,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 
+const { remote } = window.require('electron');
+
 MediaControl.propTypes = {
   videoRef: PropTypes.object.isRequired,
 };
@@ -17,18 +19,16 @@ const HOVER_SEEK_PROGRESS_BAR_HEIGHT = 10;
 function MediaControl({
   videoRef,
 }) {
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
   const [isUserSeeking, setIsUserSeeking] = useState(false);
   const [progressBarHeight, setProgressBarHeight] = useState(NORMAL_PROGRESS_BAR_HEIGHT);
   const [isMouseInProgressBar, setIsMouseInProgressBar] = useState(false);
 
   const onPlayButtonClicked = () => {
-    setIsVideoPlaying(!isVideoPlaying);
-    if (isVideoPlaying) {
-      videoRef.current.pause();
-    } else {
+    if (videoRef.current.paused) {
       videoRef.current.play();
+    } else {
+      videoRef.current.pause();
     }
   };
 
@@ -48,6 +48,37 @@ function MediaControl({
   };
 
   const mouseEventToVideoPercentage = (e) => e.nativeEvent.offsetX / e.currentTarget.getBoundingClientRect().width * 100;
+
+
+  useEffect(() => {
+    const win = remote.getCurrentWindow();
+
+    const listeners = [];
+    listeners.push((event) => {
+      if (event.keyCode === 70) {
+        win.setFullScreen(!win.isFullScreen());
+      }
+    });
+    listeners.push((event) => {
+      if (event.keyCode === 37) {
+        videoRef.current.currentTime -= 5;
+      }
+    });
+    listeners.push((event) => {
+      if (event.keyCode === 39) {
+        videoRef.current.currentTime += 5;
+      }
+    });
+    listeners.push((event) => {
+      if (event.keyCode === 32) {
+        onPlayButtonClicked();
+      }
+    });
+    listeners.forEach((listener) => window.addEventListener('keydown', listener));
+    return () => {
+      listeners.forEach((listener) => window.removeEventListener('keydown', listener));
+    };
+  }, []);
 
   return (
     <>
@@ -104,8 +135,8 @@ function MediaControl({
         <div>
           <button type="submit" onClick={onPlayButtonClicked}>
             {
-          isVideoPlaying ? 'Pause' : 'Play'
-        }
+             videoRef.current && !videoRef.current.paused ? 'Pause' : 'Play'
+            }
           </button>
         </div>
       </div>

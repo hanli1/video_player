@@ -4,7 +4,6 @@ import './App.css';
 import Titlebar from './Titlebar';
 import MediaControl from './MediaControl';
 
-
 const { dialog } = window.require('electron').remote;
 const { basename } = window.require('path');
 
