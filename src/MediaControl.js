@@ -10,11 +10,17 @@ MediaControl.propTypes = {
   videoRef: PropTypes.object.isRequired,
 };
 
+const NORMAL_PROGRESS_BAR_HEIGHT = 5;
+const HOVER_SEEK_PROGRESS_BAR_HEIGHT = 10;
+
 function MediaControl({
   videoRef,
 }) {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
+  const [isUserSeeking, setIsUserSeeking] = useState(false);
+  const [progressBarHeight, setProgressBarHeight] = useState(NORMAL_PROGRESS_BAR_HEIGHT);
+  const [isMouseInProgressBar, setIsMouseInProgressBar] = useState(false);
 
   const onPlayButtonClicked = () => {
     setIsVideoPlaying(!isVideoPlaying);
@@ -40,29 +46,60 @@ function MediaControl({
     }
   };
 
+  const mouseEventToVideoPercentage = (e) => e.nativeEvent.offsetX / e.currentTarget.getBoundingClientRect().width * 100;
+
   return (
-    <div style={styles.container}>
+    <>
       <div
-        style={styles.progressBar}
-        onMouseDown={(e) => {
-          console.log('drag');
-          seekTo(e.nativeEvent.offsetX / e.currentTarget.getBoundingClientRect().width * 100);
+        style={{
+          ...styles.mouseListenerLayer,
+          ...isUserSeeking ? styles.mouseListenerLayerActive : {},
         }}
-      >
-        <div style={{
-          ...styles.currentProgressBar,
-          ...{ width: `${currentProgressPercentage}%` },
+        onMouseMove={(e) => {
+          if (isUserSeeking) {
+            setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
+            seekTo(mouseEventToVideoPercentage(e));
+          }
         }}
-        />
-      </div>
-      <div>
-        <button type="submit" onClick={onPlayButtonClicked}>
-          {
+        onMouseUp={() => {
+          if (!isMouseInProgressBar) {
+            setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
+          }
+          setIsUserSeeking(false);
+        }}
+      />
+      <div style={styles.container}>
+        <div
+          style={{ ...styles.progressBar, ...{ height: progressBarHeight } }}
+          onMouseOver={() => {
+            setIsMouseInProgressBar(true);
+            setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
+          }}
+          onMouseOut={() => {
+            setIsMouseInProgressBar(false);
+            setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
+          }}
+          onMouseDown={(e) => {
+            setIsUserSeeking(true);
+            seekTo(mouseEventToVideoPercentage(e));
+          }}
+        >
+          <div style={{
+            ...styles.currentProgressBar,
+            ...{ height: progressBarHeight },
+            ...{ width: `${currentProgressPercentage}%` },
+          }}
+          />
+        </div>
+        <div>
+          <button type="submit" onClick={onPlayButtonClicked}>
+            {
           isVideoPlaying ? 'Pause' : 'Play'
         }
-        </button>
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -76,12 +113,21 @@ const styles = {
   currentProgressBar: {
     width: '50%',
     backgroundColor: '#7CB518',
-    height: 5,
   },
   progressBar: {
     width: '100%',
     backgroundColor: '#8F8389',
-    height: 5,
+  },
+  mouseListenerLayer: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    pointerEvents: 'none',
+  },
+  mouseListenerLayerActive: {
+    pointerEvents: 'auto',
   },
 };
 
