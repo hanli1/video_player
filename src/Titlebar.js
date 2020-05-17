@@ -1,8 +1,7 @@
-/* eslint-disable jsx-a11y/mouse-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/media-has-caption */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+
+import WindowButton from './WindowButton';
 
 const { remote } = window.require('electron');
 
@@ -11,9 +10,6 @@ Titlebar.propTypes = {
 };
 
 function Titlebar({ titleText }) {
-  const [hoveredButton, setHoveredButton] = useState('');
-  const [activeButton, setActiveButton] = useState('');
-
   const window = remote.getCurrentWindow();
 
   const getImagePath = (imagePath) => process.env.PUBLIC_URL + imagePath;
@@ -24,38 +20,19 @@ function Titlebar({ titleText }) {
   const closeW20 = getImagePath('/windowsIcons/close-w-20.png');
   const closeW24 = getImagePath('/windowsIcons/close-w-24.png');
   const closeW30 = getImagePath('/windowsIcons/close-w-30.png');
+  const closeButtonSrcSet = `${closeW10} 1x, ${closeW12} 1.25x, ${closeW15} 1.5x, ${closeW15} 1.75x, ${closeW20} 2x, ${closeW20} 2.25x, ${closeW24} 2.5x, ${closeW30} 3x, ${closeW20} 3.5x`;
 
-  const clearAllButtons = () => {
-    setHoveredButton('');
-    setActiveButton('');
-  };
   return (
     <div style={styles.container}>
       <div style={styles.draggableRegion}>
         <div style={styles.titleText}>{titleText}</div>
         <div style={styles.windowButtonGroup}>
-          <div
-            style={{
-              ...styles.windowButton,
-              ...hoveredButton === 'close' ? styles.closeButtonHover : {},
-              ...activeButton === 'close' ? styles.closeButtonActive : {},
-            }}
-            onMouseOver={() => setHoveredButton('close')}
-            onMouseOut={clearAllButtons}
-            onMouseDown={() => setActiveButton('close')}
-            onMouseUp={clearAllButtons}
-            onClick={() => { window.close(); }}
-          >
-            <img
-              style={styles.windowButtonImage}
-              className="icon"
-              alt=""
-              srcSet={
-              `${closeW10} 1x, ${closeW12} 1.25x, ${closeW15} 1.5x, ${closeW15} 1.75x, ${closeW20} 2x, ${closeW20} 2.25x, ${closeW24} 2.5x, ${closeW30} 3x, ${closeW20} 3.5x`
-            }
-              draggable="false"
-            />
-          </div>
+          <WindowButton
+            srcSet={closeButtonSrcSet}
+            onHoverStyle={styles.closeButtonHover}
+            onActiveStyle={styles.closeButtonActive}
+            onClick={() => window.minimize()}
+          />
         </div>
       </div>
     </div>
