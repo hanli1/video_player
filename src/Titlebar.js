@@ -30,8 +30,8 @@ function Titlebar({ titleText }) {
         <div style={styles.windowButtonGroup}>
           <WindowButton
             srcSet={getSrcSetForButton('min')}
-            onHoverStyle={styles.closeButtonHover}
-            onActiveStyle={styles.closeButtonActive}
+            onHoverStyle={styles.windowButtonHover}
+            onActiveStyle={styles.windowButtonActive}
             onClick={() => window.minimize()}
           />
           {
@@ -39,8 +39,8 @@ function Titlebar({ titleText }) {
               ? (
                 <WindowButton
                   srcSet={getSrcSetForButton('restore')}
-                  onHoverStyle={styles.closeButtonHover}
-                  onActiveStyle={styles.closeButtonActive}
+                  onHoverStyle={styles.windowButtonHover}
+                  onActiveStyle={styles.windowButtonActive}
                   onClick={() => {
                     window.unmaximize();
                     setIsMaximized(false);
@@ -49,8 +49,8 @@ function Titlebar({ titleText }) {
               ) : (
                 <WindowButton
                   srcSet={getSrcSetForButton('max')}
-                  onHoverStyle={styles.closeButtonHover}
-                  onActiveStyle={styles.closeButtonActive}
+                  onHoverStyle={styles.windowButtonHover}
+                  onActiveStyle={styles.windowButtonActive}
                   onClick={() => {
                     window.maximize();
                     setIsMaximized(true);
@@ -88,6 +88,12 @@ const styles = {
   },
   closeButtonHover: {
     backgroundColor: '#E81123',
+  },
+  windowButtonActive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  windowButtonHover: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   container: {
     height: 32,
