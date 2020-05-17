@@ -8,7 +8,7 @@ const { dialog } = window.require('electron').remote;
 
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
 function App() {
-  const [currentVideoPath, setCurrentVideoPath] = useState('');
+  const [currentVideoPath, setCurrentVideoPath] = useState(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const videoPlayerRefContainer = useRef(null);
@@ -33,7 +33,7 @@ function App() {
   return (
     <>
       <div style={styles.container}>
-        <Titlebar />
+        <Titlebar titleText={currentVideoPath === null ? 'Video Player' : currentVideoPath} />
         <button type="submit" onClick={onVideoSelect}>Select video</button>
         <video ref={videoPlayerRefContainer} src={currentVideoPath} type="video/mp4" style={styles.video} />
         <button type="submit" onClick={onPlayButtonClicked}>

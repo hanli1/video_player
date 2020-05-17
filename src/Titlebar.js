@@ -2,10 +2,15 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/media-has-caption */
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const { remote } = window.require('electron');
 
-function Titlebar() {
+Titlebar.propTypes = {
+  titleText: PropTypes.string.isRequired,
+};
+
+function Titlebar({ titleText }) {
   const [hoveredButton, setHoveredButton] = useState('');
   const [activeButton, setActiveButton] = useState('');
 
@@ -27,7 +32,7 @@ function Titlebar() {
   return (
     <div style={styles.container}>
       <div style={styles.draggableRegion}>
-        <div style={styles.titleText}>Video Player</div>
+        <div style={styles.titleText}>{titleText}</div>
         <div style={styles.windowButtonGroup}>
           <div
             style={{
