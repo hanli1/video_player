@@ -134,6 +134,9 @@ const styles = {
     height: '100%',
     alignItems: 'center',
     color: 'white',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
   },
 };
 
