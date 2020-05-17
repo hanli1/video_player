@@ -110,6 +110,9 @@ function MediaControl({
 
 const styles = {
   container: {
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
