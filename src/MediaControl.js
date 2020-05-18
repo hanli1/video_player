@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
@@ -27,6 +29,9 @@ function MediaControl({
   const [progressBarHeight, setProgressBarHeight] = useState(NORMAL_PROGRESS_BAR_HEIGHT);
   const [isMouseInProgressBar, setIsMouseInProgressBar] = useState(false);
 
+  const [currentTime, setCurrentTime] = useState(null);
+  const [videoDuration, setVideoDuration] = useState(null);
+
   const progressBarRef = useRef(null);
 
   const onPlayButtonClicked = () => {
@@ -40,7 +45,13 @@ function MediaControl({
   useEffect(
     () => {
       videoRef.current.addEventListener('timeupdate', (e) => {
+        setCurrentTime(e.srcElement.currentTime);
+        setVideoDuration(e.srcElement.duration);
         setCurrentProgressPercentage((e.srcElement.currentTime / e.srcElement.duration) * 100);
+      });
+      videoRef.current.addEventListener('loadeddata', (e) => {
+        setCurrentTime(e.srcElement.currentTime);
+        setVideoDuration(e.srcElement.duration);
       });
     },
     [],
@@ -89,6 +100,13 @@ function MediaControl({
       listeners.forEach((listener) => window.removeEventListener('keydown', listener));
     };
   }, []);
+
+  const secToMin = (seconds) => {
+    const m = Math.round(seconds / 60);
+    const s = Math.round(seconds % 60);
+
+    return `${m}:${s >= 10 ? s : (`0${s}`)}`;
+  };
 
   return (
     <div style={styles.container}>
@@ -144,7 +162,7 @@ function MediaControl({
             />
           </div>
         </AnimateHeight>
-        <div>
+        <div style={styles.controlsContainer}>
           {
             videoRef.current && !videoRef.current.paused
               ? (
@@ -159,6 +177,12 @@ function MediaControl({
           }
           <div style={styles.mediaControlButton} onClick={onVideoSelect}>
             <img src={getImagePath('/selectfilebutton.png')} style={styles.mediaControlButtonImage} />
+          </div>
+          <div style={styles.timeText}>
+            <span>
+              {currentTime !== null && videoDuration !== null
+                && `${secToMin(currentTime)} / ${secToMin(videoDuration)}`}
+            </span>
           </div>
         </div>
       </div>
@@ -179,6 +203,7 @@ const styles = {
   },
   styleContainer: {
     margin: 20,
+    paddingBottom: 5,
   },
   currentProgressBar: {
     height: HOVER_SEEK_PROGRESS_BAR_HEIGHT,
@@ -188,6 +213,7 @@ const styles = {
     userSelect: 'none',
   },
   progressBar: {
+    cursor: 'pointer',
     height: HOVER_SEEK_PROGRESS_BAR_HEIGHT,
     width: '100%',
     backgroundColor: '#8F8389',
@@ -218,6 +244,17 @@ const styles = {
     width: 30,
     maxHeight: '100%',
     filter: 'invert(100%)',
+  },
+  timeText: {
+    padding: 8,
+    margin: 4,
+    color: 'white',
+    fontSize: 24,
+  },
+  controlsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 };
 
