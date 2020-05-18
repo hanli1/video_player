@@ -41,6 +41,9 @@ function App() {
       { name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] },
     ];
     const files = await dialog.showOpenDialog({ filters: allowedFormats, properties: ['openFile'] });
+    if (files.filePaths.length === 0) {
+      return;
+    }
     setCurrentVideoPath(files.filePaths[0]);
   };
 
