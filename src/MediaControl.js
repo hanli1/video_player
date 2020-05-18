@@ -86,27 +86,24 @@ function MediaControl({
       if (event.keyCode === 70) {
         win.setFullScreen(!win.isFullScreen());
       }
-    });
-    listeners.push((event) => {
       if (event.keyCode === 37) {
         videoRef.current.currentTime -= 5;
       }
-    });
-    listeners.push((event) => {
       if (event.keyCode === 39) {
         videoRef.current.currentTime += 5;
       }
-    });
-    listeners.push((event) => {
       if (event.keyCode === 32) {
         onPlayButtonClicked();
+      }
+      if (event.keyCode === 27) {
+        win.setFullScreen(false);
       }
     });
     listeners.forEach((listener) => window.addEventListener('keydown', listener));
     return () => {
       listeners.forEach((listener) => window.removeEventListener('keydown', listener));
     };
-  }, [isVideoPlaying]);
+  }, [isVideoPlaying, remote]);
 
   const secToMin = (seconds) => {
     const m = Math.round(seconds / 60);
