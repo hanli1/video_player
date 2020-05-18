@@ -42,6 +42,7 @@ function MediaControl({
 
   const [currentTime, setCurrentTime] = useState(null);
   const [videoDuration, setVideoDuration] = useState(null);
+  const [isMouseInControl, setIsMouseInControl] = useState(false);
 
   const progressBarRef = useRef(null);
 
@@ -114,11 +115,15 @@ function MediaControl({
 
   return (
     <CSSTransition
-      in={hidden}
+      in={hidden && !isMouseInControl}
       timeout={250}
       classNames="media-control-anim"
     >
-      <div style={styles.container}>
+      <div
+        style={styles.container}
+        onMouseOver={() => setIsMouseInControl(true)}
+        onMouseLeave={() => setIsMouseInControl(false)}
+      >
         <div style={styles.styleContainer}>
           <div
             style={{
