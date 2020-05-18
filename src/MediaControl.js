@@ -15,6 +15,7 @@ const { remote } = window.require('electron');
 MediaControl.propTypes = {
   videoRef: PropTypes.object.isRequired,
   onVideoSelect: PropTypes.func.isRequired,
+  hidden: PropTypes.bool.isRequired,
 };
 
 const NORMAL_PROGRESS_BAR_HEIGHT = 5;
@@ -23,6 +24,7 @@ const HOVER_SEEK_PROGRESS_BAR_HEIGHT = 10;
 function MediaControl({
   videoRef,
   onVideoSelect,
+  hidden,
 }) {
   const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
   const [isUserSeeking, setIsUserSeeking] = useState(false);
@@ -108,10 +110,9 @@ function MediaControl({
     return `${m}:${s >= 10 ? s : (`0${s}`)}`;
   };
 
-  return (
+  return !hidden ? (
     <div style={styles.container}>
       <div style={styles.styleContainer}>
-
         <div
           style={{
             ...styles.mouseListenerLayer,
@@ -187,7 +188,7 @@ function MediaControl({
         </div>
       </div>
     </div>
-  );
+  ) : null;
 }
 
 const styles = {

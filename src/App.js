@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import Titlebar from './Titlebar';
 import MediaControl from './MediaControl';
@@ -7,10 +7,34 @@ import MediaControl from './MediaControl';
 const { dialog } = window.require('electron').remote;
 const { basename } = window.require('path');
 
+const COUNT_DOWN_SECONDS = 3;
 function App() {
   const [currentVideoPath, setCurrentVideoPath] = useState(null);
+  const [countDown, setCountDown] = useState(COUNT_DOWN_SECONDS);
+  // const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const listeners = [];
+    listeners.push((event) => {
+      if (event.keyCode !== null) {
+        setCountDown(COUNT_DOWN_SECONDS);
+      }
+    });
+    listeners.forEach((listener) => window.addEventListener('keydown', listener));
+    return () => {
+      listeners.forEach((listener) => window.removeEventListener('keydown', listener));
+    };
+  }, []);
 
   const videoPlayerRefContainer = useRef(null);
+
+  useEffect(() => {
+    let interval = null;
+    interval = setInterval(() => {
+      setCountDown(Math.max(countDown - 1, 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [countDown]);
 
   const onVideoSelect = async () => {
     const allowedFormats = [
@@ -22,10 +46,10 @@ function App() {
 
   return (
     <>
-      <div style={styles.container}>
+      <div style={styles.container} onMouseMove={() => { setCountDown(COUNT_DOWN_SECONDS); }}>
         <Titlebar titleText={currentVideoPath === null ? 'Video Player' : basename(currentVideoPath)} />
         <video ref={videoPlayerRefContainer} src={currentVideoPath} type="video/mp4" style={styles.video} />
-        <MediaControl videoRef={videoPlayerRefContainer} onVideoSelect={onVideoSelect} />
+        <MediaControl hidden={countDown === 0} videoRef={videoPlayerRefContainer} onVideoSelect={onVideoSelect} />
       </div>
     </>
   );

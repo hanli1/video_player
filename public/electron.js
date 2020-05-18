@@ -8,7 +8,7 @@ function createWindow() {
     width: 800,
     height: 600,
     frame: false,
-    backgroundColor: '#FFF',
+    backgroundColor: 'black',
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
@@ -26,6 +26,10 @@ function createWindow() {
   if (isDev) {
     win.webContents.openDevTools();
   }
+
+  win.once('ready-to-show', () => {
+    win.show();
+  });
 }
 
 // This method will be called when Electron has finished
