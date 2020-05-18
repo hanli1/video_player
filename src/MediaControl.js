@@ -10,7 +10,10 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
+import { CSSTransition } from 'react-transition-group';
 import { getImagePath } from './Utils';
+
+import './MediaControl.css';
 
 const { remote } = window.require('electron');
 
@@ -118,61 +121,66 @@ function MediaControl({
     return `${m}:${s >= 10 ? s : (`0${s}`)}`;
   };
 
-  return !hidden ? (
-    <div style={styles.container}>
-      <div style={styles.styleContainer}>
-        <div
-          style={{
-            ...styles.mouseListenerLayer,
-            ...isUserSeeking ? styles.mouseListenerLayerActive : {},
-          }}
-          onMouseMove={(e) => {
-            if (isUserSeeking) {
-              setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
-              seekTo(areaListenerMouseEventToVideoPercentage(e));
-            }
-          }}
-          onMouseUp={() => {
-            if (!isMouseInProgressBar) {
-              setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
-            }
-            setIsUserSeeking(false);
-          }}
-        />
-        <AnimateHeight duration={250} height={progressBarHeight}>
+  return (
+    <CSSTransition
+      in={hidden}
+      timeout={250}
+      classNames="media-control-anim"
+    >
+      <div style={styles.container}>
+        <div style={styles.styleContainer}>
           <div
-            ref={progressBarRef}
-            style={styles.progressBar}
-            onMouseOver={() => {
-              setIsMouseInProgressBar(true);
-              setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
-            }}
-            onMouseOut={() => {
-              setIsMouseInProgressBar(false);
-              setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
-            }}
-            onMouseDown={(e) => {
-              setIsUserSeeking(true);
-              seekTo(progressBarMouseEventToVideoPercentage(e));
+            style={{
+              ...styles.mouseListenerLayer,
+              ...isUserSeeking ? styles.mouseListenerLayerActive : {},
             }}
             onMouseMove={(e) => {
               if (isUserSeeking) {
-                seekTo(progressBarMouseEventToVideoPercentage(e));
+                setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
+                seekTo(areaListenerMouseEventToVideoPercentage(e));
               }
             }}
             onMouseUp={() => {
+              if (!isMouseInProgressBar) {
+                setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
+              }
               setIsUserSeeking(false);
             }}
-          >
-            <div style={{
-              ...styles.currentProgressBar,
-              ...{ width: `${currentProgressPercentage}%` },
-            }}
-            />
-          </div>
-        </AnimateHeight>
-        <div style={styles.controlsContainer}>
-          {
+          />
+          <AnimateHeight duration={250} height={progressBarHeight}>
+            <div
+              ref={progressBarRef}
+              style={styles.progressBar}
+              onMouseOver={() => {
+                setIsMouseInProgressBar(true);
+                setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
+              }}
+              onMouseOut={() => {
+                setIsMouseInProgressBar(false);
+                setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
+              }}
+              onMouseDown={(e) => {
+                setIsUserSeeking(true);
+                seekTo(progressBarMouseEventToVideoPercentage(e));
+              }}
+              onMouseMove={(e) => {
+                if (isUserSeeking) {
+                  seekTo(progressBarMouseEventToVideoPercentage(e));
+                }
+              }}
+              onMouseUp={() => {
+                setIsUserSeeking(false);
+              }}
+            >
+              <div style={{
+                ...styles.currentProgressBar,
+                ...{ width: `${currentProgressPercentage}%` },
+              }}
+              />
+            </div>
+          </AnimateHeight>
+          <div style={styles.controlsContainer}>
+            {
             isVideoPlaying
               ? (
                 <div style={styles.mediaControlButton} onClick={onPlayButtonClicked}>
@@ -184,19 +192,20 @@ function MediaControl({
                 </div>
               )
           }
-          <div style={styles.mediaControlButton} onClick={onVideoSelect}>
-            <img src={getImagePath('/selectfilebutton.png')} style={styles.mediaControlButtonImage} />
-          </div>
-          <div style={styles.timeText}>
-            <span>
-              {currentTime !== null && videoDuration !== null
+            <div style={styles.mediaControlButton} onClick={onVideoSelect}>
+              <img src={getImagePath('/selectfilebutton.png')} style={styles.mediaControlButtonImage} />
+            </div>
+            <div style={styles.timeText}>
+              <span>
+                {currentTime !== null && videoDuration !== null
                 && `${secToMin(currentTime)} / ${secToMin(videoDuration)}`}
-            </span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  ) : null;
+    </CSSTransition>
+  );
 }
 
 const styles = {

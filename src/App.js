@@ -7,7 +7,7 @@ import MediaControl from './MediaControl';
 const { dialog } = window.require('electron').remote;
 const { basename } = window.require('path');
 
-const COUNT_DOWN_SECONDS = 3;
+const COUNT_DOWN_SECONDS = 2;
 function App() {
   const [currentVideoPath, setCurrentVideoPath] = useState(null);
   const [countDown, setCountDown] = useState(COUNT_DOWN_SECONDS);
