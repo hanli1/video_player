@@ -46,6 +46,9 @@ function MediaControl({
   const progressBarRef = useRef(null);
 
   const onPlayButtonClicked = useCallback(() => {
+    if (videoRef.current.currentSrc === '') {
+      return;
+    }
     if (!isVideoPlaying) {
       setIsVideoPlaying(true);
       videoRef.current.play();
