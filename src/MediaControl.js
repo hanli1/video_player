@@ -62,12 +62,16 @@ function MediaControl({
     () => {
       videoRef.current.addEventListener('timeupdate', (e) => {
         setCurrentTime(e.srcElement.currentTime);
-        setVideoDuration(e.srcElement.duration);
+        if (!Number.isNaN(e.srcElement.duration)) {
+          setVideoDuration(e.srcElement.duration);
+        }
         setCurrentProgressPercentage((e.srcElement.currentTime / e.srcElement.duration) * 100);
       });
       videoRef.current.addEventListener('loadeddata', (e) => {
         setCurrentTime(e.srcElement.currentTime);
-        setVideoDuration(e.srcElement.duration);
+        if (!Number.isNaN(e.srcElement.duration)) {
+          setVideoDuration(e.srcElement.duration);
+        }
       });
     },
     [],
