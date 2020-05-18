@@ -22,7 +22,7 @@ MediaControl.propTypes = {
   onVideoSelect: PropTypes.func.isRequired,
   hidden: PropTypes.bool.isRequired,
   isVideoPlaying: PropTypes.bool.isRequired,
-  setIsVideoPlaying: PropTypes.func.isRequired,
+  onPlayButtonClicked: PropTypes.func.isRequired,
 };
 
 const NORMAL_PROGRESS_BAR_HEIGHT = 5;
@@ -33,7 +33,7 @@ function MediaControl({
   onVideoSelect,
   hidden,
   isVideoPlaying,
-  setIsVideoPlaying,
+  onPlayButtonClicked,
 }) {
   const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
   const [isUserSeeking, setIsUserSeeking] = useState(false);
@@ -44,19 +44,6 @@ function MediaControl({
   const [videoDuration, setVideoDuration] = useState(null);
 
   const progressBarRef = useRef(null);
-
-  const onPlayButtonClicked = useCallback(() => {
-    if (videoRef.current.currentSrc === '') {
-      return;
-    }
-    if (!isVideoPlaying) {
-      setIsVideoPlaying(true);
-      videoRef.current.play();
-    } else {
-      setIsVideoPlaying(false);
-      videoRef.current.pause();
-    }
-  }, [isVideoPlaying]);
 
   useEffect(
     () => {

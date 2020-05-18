@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, { useState, useRef, useEffect } from 'react';
+import React, {
+  useState, useRef, useEffect, useCallback,
+} from 'react';
 import './App.css';
 import Titlebar from './Titlebar';
 import MediaControl from './MediaControl';
@@ -11,7 +13,7 @@ const COUNT_DOWN_SECONDS = 2;
 function App() {
   const [currentVideoPath, setCurrentVideoPath] = useState(null);
   const [countDown, setCountDown] = useState(COUNT_DOWN_SECONDS);
-  const videoPlayerRefContainer = useRef(null);
+  const videoRef = useRef(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   useEffect(() => {
@@ -47,6 +49,19 @@ function App() {
     setCurrentVideoPath(files.filePaths[0]);
   };
 
+  const onPlayButtonClicked = useCallback(() => {
+    if (videoRef.current.currentSrc === '') {
+      return;
+    }
+    if (!isVideoPlaying) {
+      setIsVideoPlaying(true);
+      videoRef.current.play();
+    } else {
+      setIsVideoPlaying(false);
+      videoRef.current.pause();
+    }
+  }, [isVideoPlaying]);
+
   return (
     <>
       <div
@@ -55,13 +70,13 @@ function App() {
         onClick={() => { setCountDown(COUNT_DOWN_SECONDS); }}
       >
         <Titlebar titleText={currentVideoPath === null ? 'Video Player' : basename(currentVideoPath)} />
-        <video ref={videoPlayerRefContainer} src={currentVideoPath} type="video/mp4" style={styles.video} />
+        <video ref={videoRef} src={currentVideoPath} type="video/mp4" style={styles.video} onClick={onPlayButtonClicked} />
         <MediaControl
           hidden={countDown === 0 && isVideoPlaying}
-          videoRef={videoPlayerRefContainer}
+          videoRef={videoRef}
           onVideoSelect={onVideoSelect}
           isVideoPlaying={isVideoPlaying}
-          setIsVideoPlaying={setIsVideoPlaying}
+          onPlayButtonClicked={onPlayButtonClicked}
         />
       </div>
     </>
