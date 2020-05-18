@@ -5,7 +5,9 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useState, useEffect, useRef, useCallback,
+} from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 import { getImagePath } from './Utils';
@@ -16,6 +18,8 @@ MediaControl.propTypes = {
   videoRef: PropTypes.object.isRequired,
   onVideoSelect: PropTypes.func.isRequired,
   hidden: PropTypes.bool.isRequired,
+  isVideoPlaying: PropTypes.bool.isRequired,
+  setIsVideoPlaying: PropTypes.func.isRequired,
 };
 
 const NORMAL_PROGRESS_BAR_HEIGHT = 5;
@@ -25,6 +29,8 @@ function MediaControl({
   videoRef,
   onVideoSelect,
   hidden,
+  isVideoPlaying,
+  setIsVideoPlaying,
 }) {
   const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
   const [isUserSeeking, setIsUserSeeking] = useState(false);
@@ -36,13 +42,15 @@ function MediaControl({
 
   const progressBarRef = useRef(null);
 
-  const onPlayButtonClicked = () => {
-    if (videoRef.current.paused) {
+  const onPlayButtonClicked = useCallback(() => {
+    if (!isVideoPlaying) {
+      setIsVideoPlaying(true);
       videoRef.current.play();
     } else {
+      setIsVideoPlaying(false);
       videoRef.current.pause();
     }
-  };
+  }, [isVideoPlaying]);
 
   useEffect(
     () => {
@@ -101,7 +109,7 @@ function MediaControl({
     return () => {
       listeners.forEach((listener) => window.removeEventListener('keydown', listener));
     };
-  }, []);
+  }, [isVideoPlaying]);
 
   const secToMin = (seconds) => {
     const m = Math.round(seconds / 60);
@@ -165,7 +173,7 @@ function MediaControl({
         </AnimateHeight>
         <div style={styles.controlsContainer}>
           {
-            videoRef.current && !videoRef.current.paused
+            isVideoPlaying
               ? (
                 <div style={styles.mediaControlButton} onClick={onPlayButtonClicked}>
                   <img src={getImagePath('/pausebutton.png')} style={styles.mediaControlButtonImage} />

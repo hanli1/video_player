@@ -11,7 +11,8 @@ const COUNT_DOWN_SECONDS = 3;
 function App() {
   const [currentVideoPath, setCurrentVideoPath] = useState(null);
   const [countDown, setCountDown] = useState(COUNT_DOWN_SECONDS);
-  // const [isActive, setIsActive] = useState(false);
+  const videoPlayerRefContainer = useRef(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   useEffect(() => {
     const listeners = [];
@@ -26,7 +27,6 @@ function App() {
     };
   }, []);
 
-  const videoPlayerRefContainer = useRef(null);
 
   useEffect(() => {
     let interval = null;
@@ -46,10 +46,20 @@ function App() {
 
   return (
     <>
-      <div style={styles.container} onMouseMove={() => { setCountDown(COUNT_DOWN_SECONDS); }}>
+      <div
+        style={styles.container}
+        onMouseMove={() => { setCountDown(COUNT_DOWN_SECONDS); }}
+        onClick={() => { setCountDown(COUNT_DOWN_SECONDS); }}
+      >
         <Titlebar titleText={currentVideoPath === null ? 'Video Player' : basename(currentVideoPath)} />
         <video ref={videoPlayerRefContainer} src={currentVideoPath} type="video/mp4" style={styles.video} />
-        <MediaControl hidden={countDown === 0} videoRef={videoPlayerRefContainer} onVideoSelect={onVideoSelect} />
+        <MediaControl
+          hidden={countDown === 0 && isVideoPlaying}
+          videoRef={videoPlayerRefContainer}
+          onVideoSelect={onVideoSelect}
+          isVideoPlaying={isVideoPlaying}
+          setIsVideoPlaying={setIsVideoPlaying}
+        />
       </div>
     </>
   );
