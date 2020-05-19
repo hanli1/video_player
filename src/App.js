@@ -116,6 +116,8 @@ const styles = {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    borderStyle: 'none',
+    outline: 'none',
   },
   video: {
     width: '100%',

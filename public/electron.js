@@ -32,20 +32,10 @@ function createWindow() {
     win.show();
   });
 
-
-  ipcMain.on('get-file-data', (event) => {
-    let openFilePath = null;
-    if (process.platform === 'win32' && process.argv.length >= 2) {
-      openFilePath = process.argv[1];
-    }
+  if (process.platform === 'win32' && process.argv.length >= 2) {
+    const openFilePath = process.argv[1];
     win.webContents.send('openedWithFilePath', openFilePath);
-  });
-
-  ipcMain.on('ondragstart', (event, filePath) => {
-    event.sender.startDrag({
-      file: filePath,
-    });
-  });
+  }
 }
 
 // This method will be called when Electron has finished
