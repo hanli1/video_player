@@ -20,7 +20,7 @@ function App() {
 
   useEffect(() => {
     const filePath = ipcRenderer.sendSync('get-file-data');
-    if (filePath !== null) {
+    if (filePath !== null && filePath !== '.') {
       setCurrentVideoPath(filePath);
     }
   }, []);

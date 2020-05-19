@@ -44,6 +44,8 @@ function MediaControl({
   const [videoDuration, setVideoDuration] = useState(null);
   const [isMouseInControl, setIsMouseInControl] = useState(false);
 
+  const [isVideoMuted, setIsVideoMuted] = useState(false);
+
   const progressBarRef = useRef(null);
 
   useEffect(
@@ -85,7 +87,7 @@ function MediaControl({
     const listeners = [];
     listeners.push((event) => {
       if (event.keyCode === 70) {
-        win.setFullScreen(!win.isFullScreen());
+        toggleFullScreen();
       }
       if (event.keyCode === 37) {
         videoRef.current.currentTime -= 5;
@@ -111,6 +113,24 @@ function MediaControl({
     const s = Math.round(seconds % 60);
 
     return `${m}:${s >= 10 ? s : (`0${s}`)}`;
+  };
+
+  const toggleVideoMuted = () => {
+    if (videoRef.current.currentSrc === '') {
+      return;
+    }
+    if (isVideoMuted) {
+      videoRef.current.muted = false;
+      setIsVideoMuted(false);
+    } else {
+      videoRef.current.muted = true;
+      setIsVideoMuted(true);
+    }
+  };
+
+  const toggleFullScreen = () => {
+    const win = remote.getCurrentWindow();
+    win.setFullScreen(!win.isFullScreen());
   };
 
   return (
@@ -187,15 +207,34 @@ function MediaControl({
                   <img src={getImagePath('/playbutton.png')} style={styles.mediaControlButtonImage} />
                 </div>
               )
-          }
+            }
             <div style={styles.mediaControlButton} onClick={onVideoSelect}>
               <img src={getImagePath('/selectfilebutton.png')} style={styles.mediaControlButtonImage} />
             </div>
+            {
+              isVideoMuted
+                ? (
+                  <div style={styles.mediaControlButton} onClick={toggleVideoMuted}>
+                    <img src={getImagePath('/soundmuted.png')} style={styles.mediaControlButtonImage} />
+                  </div>
+                )
+                : (
+                  <div style={styles.mediaControlButton} onClick={toggleVideoMuted}>
+                    <img src={getImagePath('/soundon.png')} style={styles.mediaControlButtonImage} />
+                  </div>
+                )
+            }
             <div style={styles.timeText}>
               <span>
                 {currentTime !== null && videoDuration !== null
                 && `${secToMin(currentTime)} / ${secToMin(videoDuration)}`}
               </span>
+            </div>
+            <div style={styles.mediaControlButton} onClick={toggleFullScreen}>
+              <img src={getImagePath('/fullscreenbutton.png')} style={styles.mediaControlButtonImage} />
+            </div>
+            <div style={styles.mediaControlButton} onClick={onVideoSelect}>
+              <img src={getImagePath('/playlistbutton.png')} style={styles.mediaControlButtonImage} />
             </div>
           </div>
         </div>
@@ -264,6 +303,7 @@ const styles = {
     margin: 4,
     color: 'white',
     fontSize: 24,
+    flexGrow: 1,
   },
   controlsContainer: {
     display: 'flex',
