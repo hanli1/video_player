@@ -111,6 +111,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    borderStyle: 'none',
+    outline: 'none',
   },
   dragDropZone: {
     width: '100%',
