@@ -19,9 +19,10 @@ function App() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   useEffect(() => {
-    ipcRenderer.on('openedWithFilePath', (event, message) => {
-      setCurrentVideoPath(message);
-    });
+    const filePath = ipcRenderer.sendSync('get-file-data');
+    if (filePath !== null) {
+      setCurrentVideoPath(filePath);
+    }
   }, []);
 
   useEffect(() => {

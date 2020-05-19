@@ -1,7 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 const path = require('path');
-const fs = require('fs');
+
+let macVideoPath = null;
 
 function createWindow() {
   // Create the browser window.
@@ -32,10 +33,22 @@ function createWindow() {
     win.show();
   });
 
-  if (process.platform === 'win32' && process.argv.length >= 2) {
-    const openFilePath = process.argv[1];
-    win.webContents.send('openedWithFilePath', openFilePath);
-  }
+  // read the file and send data to the render process
+  ipcMain.on('get-file-data', (event) => {
+    let openFilePath = null;
+    if (process.platform === 'win32' && process.argv.length >= 2) {
+      openFilePath = process.argv[1];
+    } else if (process.platform === 'darwin') {
+      openFilePath = macVideoPath;
+    }
+    event.returnValue = openFilePath;
+  });
+
+  app.on('will-finish-launching', () => {
+    app.on('open-file', (event, videoPath) => {
+      macVideoPath = videoPath;
+    });
+  });
 }
 
 // This method will be called when Electron has finished
