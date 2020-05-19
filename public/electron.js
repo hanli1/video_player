@@ -1,6 +1,7 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 const path = require('path');
+const fs = require('fs');
 
 function createWindow() {
   // Create the browser window.
@@ -27,8 +28,23 @@ function createWindow() {
     win.webContents.openDevTools();
   }
 
-  win.once('ready-to-show', () => {
+  win.once('did-finish-load', () => {
     win.show();
+  });
+
+
+  ipcMain.on('get-file-data', (event) => {
+    let openFilePath = null;
+    if (process.platform === 'win32' && process.argv.length >= 2) {
+      openFilePath = process.argv[1];
+    }
+    win.webContents.send('openedWithFilePath', openFilePath);
+  });
+
+  ipcMain.on('ondragstart', (event, filePath) => {
+    event.sender.startDrag({
+      file: filePath,
+    });
   });
 }
 

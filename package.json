@@ -9,6 +9,13 @@
   },
   "build": {
     "appId": "com.hanli1.video-player",
+    "fileAssociations": [
+      {
+        "ext": "mp4",
+        "name": "MP4 File",
+        "role": "Editor"
+      }
+    ],
     "productName": "Video Player",
     "directories": {
       "buildResources": "assets"
@@ -28,6 +35,7 @@
     "react": "^16.13.1",
     "react-animate-height": "^2.0.21",
     "react-dom": "^16.13.1",
+    "react-dropzone": "^11.0.1",
     "react-scripts": "3.4.1",
     "react-transition-group": "^4.4.1"
   },

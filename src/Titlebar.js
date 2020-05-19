@@ -25,7 +25,7 @@ function Titlebar({ titleText }) {
     window.addListener('leave-full-screen', () => {
       setIsFullScreen(window.isFullScreen);
     });
-  });
+  }, []);
 
   return (!isFullScreen
     && (
