@@ -6,12 +6,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/media-has-caption */
 import React, {
-  useState, useEffect, useRef, useCallback,
+  useState, useEffect, useRef,
 } from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 import { CSSTransition } from 'react-transition-group';
 import { getImagePath } from './Utils';
+import MediaControlButton from './MediaControlButton';
 
 import './MediaControl.css';
 
@@ -196,46 +197,32 @@ function MediaControl({
             </div>
           </AnimateHeight>
           <div style={styles.controlsContainer}>
-            {
-            isVideoPlaying
-              ? (
-                <div style={styles.mediaControlButton} onClick={onPlayButtonClicked}>
-                  <img src={getImagePath('/pausebutton.png')} style={styles.mediaControlButtonImage} />
-                </div>
-              ) : (
-                <div style={styles.mediaControlButton} onClick={onPlayButtonClicked}>
-                  <img src={getImagePath('/playbutton.png')} style={styles.mediaControlButtonImage} />
-                </div>
-              )
-            }
-            <div style={styles.mediaControlButton} onClick={onVideoSelect}>
-              <img src={getImagePath('/selectfilebutton.png')} style={styles.mediaControlButtonImage} />
-            </div>
-            {
-              isVideoMuted
-                ? (
-                  <div style={styles.mediaControlButton} onClick={toggleVideoMuted}>
-                    <img src={getImagePath('/soundmuted.png')} style={styles.mediaControlButtonImage} />
-                  </div>
-                )
-                : (
-                  <div style={styles.mediaControlButton} onClick={toggleVideoMuted}>
-                    <img src={getImagePath('/soundon.png')} style={styles.mediaControlButtonImage} />
-                  </div>
-                )
-            }
+            <MediaControlButton
+              imageName={isVideoPlaying ? 'pausebutton.png' : 'playbutton.png'}
+              onClick={onPlayButtonClicked}
+            />
+            <MediaControlButton
+              imageName="selectfilebutton.png"
+              onClick={onVideoSelect}
+            />
+            <MediaControlButton
+              imageName={isVideoMuted ? 'soundmuted.png' : 'soundon.png'}
+              onClick={toggleVideoMuted}
+            />
             <div style={styles.timeText}>
               <span>
                 {currentTime !== null && videoDuration !== null
                 && `${secToMin(currentTime)} / ${secToMin(videoDuration)}`}
               </span>
             </div>
-            <div style={styles.mediaControlButton} onClick={toggleFullScreen}>
-              <img src={getImagePath('/fullscreenbutton.png')} style={styles.mediaControlButtonImage} />
-            </div>
-            <div style={styles.mediaControlButton} onClick={onVideoSelect}>
-              <img src={getImagePath('/playlistbutton.png')} style={styles.mediaControlButtonImage} />
-            </div>
+            <MediaControlButton
+              imageName="playlistbutton.png"
+              onClick={onVideoSelect}
+            />
+            <MediaControlButton
+              imageName="fullscreenbutton.png"
+              onClick={toggleFullScreen}
+            />
           </div>
         </div>
       </div>
@@ -284,19 +271,6 @@ const styles = {
   },
   mouseListenerLayerActive: {
     pointerEvents: 'auto',
-  },
-  mediaControlButton: {
-    backgroundColor: 'transparent',
-    padding: 8,
-    margin: 4,
-    display: 'inline-block',
-    cursor: 'pointer',
-    height: 30,
-  },
-  mediaControlButtonImage: {
-    width: 30,
-    maxHeight: '100%',
-    filter: 'invert(100%)',
   },
   timeText: {
     padding: 8,

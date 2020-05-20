@@ -82,12 +82,12 @@ function Titlebar({ titleText }) {
 }
 
 function getSrcSetForButton(name) {
-  const w10 = getImagePath(`/windowsIcons/${name}-w-10.png`);
-  const w12 = getImagePath(`/windowsIcons/${name}-w-12.png`);
-  const w15 = getImagePath(`/windowsIcons/${name}-w-15.png`);
-  const w20 = getImagePath(`/windowsIcons/${name}-w-20.png`);
-  const w24 = getImagePath(`/windowsIcons/${name}-w-24.png`);
-  const w30 = getImagePath(`/windowsIcons/${name}-w-30.png`);
+  const w10 = getImagePath(`windowsIcons/${name}-w-10.png`);
+  const w12 = getImagePath(`windowsIcons/${name}-w-12.png`);
+  const w15 = getImagePath(`windowsIcons/${name}-w-15.png`);
+  const w20 = getImagePath(`windowsIcons/${name}-w-20.png`);
+  const w24 = getImagePath(`windowsIcons/${name}-w-24.png`);
+  const w30 = getImagePath(`windowsIcons/${name}-w-30.png`);
 
   return `${w10} 1x, ${w12} 1.25x, ${w15} 1.5x, ${w15} 1.75x, ${w20} 2x, ${w20} 2.25x, ${w24} 2.5x, ${w30} 3x, ${w20} 3.5x`;
 }

@@ -1,1 +1,1 @@
-export const getImagePath = (imagePath) => process.env.PUBLIC_URL + imagePath;
+export const getImagePath = (imagePath) => `${process.env.PUBLIC_URL}/${imagePath}`;
