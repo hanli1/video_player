@@ -46,8 +46,16 @@ function MediaControl({
   const [isMouseInControl, setIsMouseInControl] = useState(false);
 
   const [isVideoMuted, setIsVideoMuted] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
   const progressBarRef = useRef(null);
+
+  useEffect(
+    () => {
+      setIsVideoLoaded(videoRef.current.currentSrc !== '');
+    },
+    [videoRef],
+  );
 
   useEffect(
     () => {
@@ -200,6 +208,7 @@ function MediaControl({
             <MediaControlButton
               imageName={isVideoPlaying ? 'pausebutton.png' : 'playbutton.png'}
               onClick={onPlayButtonClicked}
+              disabled={!isVideoLoaded}
             />
             <MediaControlButton
               imageName="selectfilebutton.png"
@@ -208,6 +217,7 @@ function MediaControl({
             <MediaControlButton
               imageName={isVideoMuted ? 'soundmuted.png' : 'soundon.png'}
               onClick={toggleVideoMuted}
+              disabled={!isVideoLoaded}
             />
             <div style={styles.timeText}>
               <span>
