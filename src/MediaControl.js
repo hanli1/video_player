@@ -11,7 +11,6 @@ import React, {
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 import { CSSTransition } from 'react-transition-group';
-import { getImagePath } from './Utils';
 import MediaControlButton from './MediaControlButton';
 
 import './MediaControl.css';
@@ -46,16 +45,8 @@ function MediaControl({
   const [isMouseInControl, setIsMouseInControl] = useState(false);
 
   const [isVideoMuted, setIsVideoMuted] = useState(false);
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
   const progressBarRef = useRef(null);
-
-  useEffect(
-    () => {
-      setIsVideoLoaded(videoRef.current.currentSrc !== '');
-    },
-    [videoRef],
-  );
 
   useEffect(
     () => {
@@ -208,7 +199,7 @@ function MediaControl({
             <MediaControlButton
               imageName={isVideoPlaying ? 'pausebutton.png' : 'playbutton.png'}
               onClick={onPlayButtonClicked}
-              disabled={!isVideoLoaded}
+              disabled={videoRef.current == null || videoRef.current.currentSrc === ''}
             />
             <MediaControlButton
               imageName="selectfilebutton.png"
@@ -217,7 +208,7 @@ function MediaControl({
             <MediaControlButton
               imageName={isVideoMuted ? 'soundmuted.png' : 'soundon.png'}
               onClick={toggleVideoMuted}
-              disabled={!isVideoLoaded}
+              disabled={videoRef.current == null || videoRef.current.currentSrc === ''}
             />
             <div style={styles.timeText}>
               <span>
