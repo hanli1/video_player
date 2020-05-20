@@ -76,7 +76,6 @@ function Titlebar({ titleText }) {
           />
         </div>
       </div>
-
     </div>
     )
   );

@@ -71,10 +71,10 @@ function App() {
     }
   }, [isVideoPlaying]);
 
-  const onDrop = useCallback((acceptedFiles) => {
+  const onDropAccepted = useCallback((acceptedFiles) => {
     setCurrentVideoPath(acceptedFiles[0].path);
   }, []);
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({ accept: 'video/mp4', onDropAccepted });
 
   return (
     <>

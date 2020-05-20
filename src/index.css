@@ -16,7 +16,7 @@ html, body {
  width: 100%;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+*, *::after, *::before {
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
 }
