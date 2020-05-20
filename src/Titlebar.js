@@ -36,8 +36,18 @@ function Titlebar({ titleText }) {
       }}
       />
       <div style={styles.container}>
-        <div style={styles.titleText}>{titleText}</div>
-        <div style={styles.windowButtonGroup}>
+        <div style={{
+          ...styles.titleText,
+          ...isMaximized && { paddingLeft: 2 },
+        }}
+        >
+          {titleText}
+        </div>
+        <div style={{
+          ...styles.windowButtonGroup,
+          ...isMaximized && { marginRight: 2 },
+        }}
+        >
           <WindowButton
             srcSet={getSrcSetForButton('min')}
             onHoverStyle={styles.windowButtonHover}
