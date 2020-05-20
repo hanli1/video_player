@@ -34,7 +34,8 @@ function Titlebar({ titleText }) {
         ...styles.draggableRegion,
         ...isMaximized ? styles.draggableRegionMaximized : styles.draggableRegionNotMaximized,
       }}
-      >
+      />
+      <div style={styles.container}>
         <div style={styles.titleText}>{titleText}</div>
         <div style={styles.windowButtonGroup}>
           <WindowButton
@@ -75,6 +76,7 @@ function Titlebar({ titleText }) {
           />
         </div>
       </div>
+
     </div>
     )
   );
@@ -108,13 +110,24 @@ const styles = {
     width: '100%',
     display: 'flex',
     backgroundColor: 'black',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  overlayLayout: {
+    height: 32,
+    width: '100%',
   },
   draggableRegion: {
     WebkitAppRegion: 'drag',
     flexGrow: 1,
+    heigth: '100%',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    zIndex: 1,
+    top: 0,
+    left: 0,
   },
   draggableRegionNotMaximized: {
     margin: 4,
@@ -123,7 +136,7 @@ const styles = {
     margin: 0,
   },
   windowButton: {
-    width: 48,
+    width: 46,
     height: 32,
     userSelect: 'none',
     alignItems: 'center',
@@ -131,10 +144,10 @@ const styles = {
     justifyContent: 'center',
   },
   windowButtonGroup: {
-    marginRight: -4,
     WebkitAppRegion: 'no-drag',
     flexDirection: 'row',
     display: 'flex',
+    zIndex: 2,
   },
   windowButtonImage: {
     height: 'auto',
