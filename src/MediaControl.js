@@ -23,6 +23,7 @@ MediaControl.propTypes = {
   hidden: PropTypes.bool.isRequired,
   isVideoPlaying: PropTypes.bool.isRequired,
   onPlayButtonClicked: PropTypes.func.isRequired,
+  setIsMouseInControl: PropTypes.func.isRequired,
 };
 
 const NORMAL_PROGRESS_BAR_HEIGHT = 5;
@@ -34,6 +35,7 @@ function MediaControl({
   hidden,
   isVideoPlaying,
   onPlayButtonClicked,
+  setIsMouseInControl,
 }) {
   const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
   const [isUserSeeking, setIsUserSeeking] = useState(false);
@@ -42,7 +44,6 @@ function MediaControl({
 
   const [currentTime, setCurrentTime] = useState(null);
   const [videoDuration, setVideoDuration] = useState(null);
-  const [isMouseInControl, setIsMouseInControl] = useState(false);
 
   const [isVideoMuted, setIsVideoMuted] = useState(false);
 
@@ -135,7 +136,7 @@ function MediaControl({
 
   return (
     <CSSTransition
-      in={hidden && !isMouseInControl}
+      in={hidden}
       timeout={250}
       classNames="media-control-anim"
     >

@@ -17,6 +17,7 @@ function App() {
   const [countDown, setCountDown] = useState(COUNT_DOWN_SECONDS);
   const videoRef = useRef(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isMouseInControl, setIsMouseInControl] = useState(false);
 
   useEffect(() => {
     const filePath = ipcRenderer.sendSync('get-file-data');
@@ -76,10 +77,14 @@ function App() {
   }, []);
   const { getRootProps, getInputProps } = useDropzone({ accept: 'video/mp4', onDropAccepted });
 
+  const shouldHideMouseAndControls = countDown === 0 && isVideoPlaying && !isMouseInControl;
   return (
     <>
       <div
-        style={styles.container}
+        style={{
+          ...styles.container,
+          ...shouldHideMouseAndControls ? styles.disableMouse : null,
+        }}
         onMouseMove={() => { setCountDown(COUNT_DOWN_SECONDS); }}
         onClick={() => { setCountDown(COUNT_DOWN_SECONDS); }}
         {...getRootProps()}
@@ -91,11 +96,12 @@ function App() {
         >
           <video ref={videoRef} src={currentVideoPath} type="video/mp4" style={styles.video} onClick={onPlayButtonClicked} />
           <MediaControl
-            hidden={countDown === 0 && isVideoPlaying}
+            hidden={shouldHideMouseAndControls}
             videoRef={videoRef}
             onVideoSelect={onVideoSelect}
             isVideoPlaying={isVideoPlaying}
             onPlayButtonClicked={onPlayButtonClicked}
+            setIsMouseInControl={setIsMouseInControl}
           />
         </div>
       </div>
@@ -113,6 +119,9 @@ const styles = {
     alignItems: 'center',
     borderStyle: 'none',
     outline: 'none',
+  },
+  disableMouse: {
+    cursor: 'none',
   },
   dragDropZone: {
     width: '100%',
