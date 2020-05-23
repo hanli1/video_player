@@ -91,7 +91,7 @@ function App() {
     return () => {
       listeners.forEach((listener) => window.removeEventListener('keydown', listener));
     };
-  }, [isVideoPlaying, remote]);
+  }, [isVideoPlaying, isVideoLoaded, remote]);
 
   useEffect(() => {
     let interval = null;

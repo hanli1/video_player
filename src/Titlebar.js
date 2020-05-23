@@ -45,7 +45,7 @@ function Titlebar({ titleText }) {
         </div>
         <div style={{
           ...styles.windowButtonGroup,
-          ...isMaximized && { marginRight: 2 },
+          ...isMaximized && { paddingRight: 0 },
         }}
         >
           <WindowButton

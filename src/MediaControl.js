@@ -52,7 +52,8 @@ function MediaControl({
 
   const progressBarRef = useRef(null);
 
-  const currentProgressPercentage = (currentTime / videoDuration) * 100;
+  const currentProgressPercentage = currentTime === null || videoDuration === null
+    ? 0 : (currentTime / videoDuration) * 100;
 
   const progressBarMouseEventToVideoPercentage = (e) => e.nativeEvent.offsetX / e.currentTarget.getBoundingClientRect().width * 100;
   const areaListenerMouseEventToVideoPercentage = (e) => {
