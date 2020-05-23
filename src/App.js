@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import './App.css';
 import { useDropzone } from 'react-dropzone';
+import { motion } from 'framer-motion';
 import Titlebar from './Titlebar';
 import MediaControl from './MediaControl';
 
@@ -27,6 +28,7 @@ function App() {
   const [videoDuration, setVideoDuration] = useState(null);
 
   const [isMouseInControl, setIsMouseInControl] = useState(false);
+  const [isPlaylistOpen, setIsPlayListOpen] = useState(true);
 
   const isVideoLoaded = videoRef.current != null && videoRef.current.currentSrc !== '';
 
@@ -167,11 +169,26 @@ function App() {
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...getRootProps()}
       >
-        <Titlebar titleText={currentVideoPath === null ? 'Video Player' : basename(currentVideoPath)} />
         <div
           {...getInputProps()}
           style={styles.dragDropZone}
         >
+          <Titlebar titleText={currentVideoPath === null ? 'Video Player' : basename(currentVideoPath)} />
+          <motion.div
+            style={styles.playlist}
+            animate={isPlaylistOpen ? 'open' : 'closed'}
+            variants={{
+              closed: {
+                opacity: 0,
+                x: 100,
+              },
+              open: {
+                opacity: 1,
+                x: 0,
+              },
+            }}
+            transition={{ duration: 0.25 }}
+          />
           <video ref={videoRef} src={currentVideoPath} type="video/mp4" style={styles.video} onClick={onPlayButtonClicked} />
           <MediaControl
             hidden={shouldHideMouseAndControls}
@@ -187,6 +204,9 @@ function App() {
             seekTo={seekTo}
             toggleFullScreen={toggleFullScreen}
             setIsMouseInControl={setIsMouseInControl}
+            togglePlaylist={() => {
+              setIsPlayListOpen(!isPlaylistOpen);
+            }}
           />
         </div>
       </div>
@@ -195,6 +215,14 @@ function App() {
 }
 
 const styles = {
+  playlist: {
+    width: 400,
+    top: 32,
+    bottom: 84,
+    position: 'absolute',
+    right: 0,
+    backgroundColor: 'gray',
+  },
   container: {
     width: '100%',
     height: '100%',

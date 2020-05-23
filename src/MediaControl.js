@@ -27,6 +27,7 @@ MediaControl.propTypes = {
   seekTo: PropTypes.func.isRequired,
   toggleFullScreen: PropTypes.func.isRequired,
   setIsMouseInControl: PropTypes.func.isRequired,
+  togglePlaylist: PropTypes.func.isRequired,
 };
 
 const NORMAL_PROGRESS_BAR_HEIGHT = 5;
@@ -45,6 +46,7 @@ function MediaControl({
   seekTo,
   toggleFullScreen,
   setIsMouseInControl,
+  togglePlaylist,
 }) {
   const [isUserSeeking, setIsUserSeeking] = useState(false);
   const [progressBarHeight, setProgressBarHeight] = useState(NORMAL_PROGRESS_BAR_HEIGHT);
@@ -153,7 +155,7 @@ function MediaControl({
             </div>
             <MediaControlButton
               imageName="playlistbutton.png"
-              onClick={onVideoSelectClicked}
+              onClick={togglePlaylist}
             />
             <MediaControlButton
               imageName="fullscreenbutton.png"

@@ -121,7 +121,6 @@ const styles = {
   },
   container: {
     display: 'flex',
-    flexGrow: 1,
     backgroundColor: 'black',
   },
   draggableRegion: {
