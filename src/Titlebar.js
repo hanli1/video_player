@@ -29,64 +29,63 @@ function Titlebar({ titleText }) {
 
   return (!isFullScreen
     && (
-    <div style={styles.container}>
-      <div style={{
-        ...styles.draggableRegion,
-        ...isMaximized ? styles.draggableRegionMaximized : styles.draggableRegionNotMaximized,
-      }}
-      />
       <div style={styles.container}>
-        <div style={{
-          ...styles.titleText,
-          ...isMaximized && { paddingLeft: 2 },
-        }}
-        >
-          {titleText}
-        </div>
-        <div style={{
-          ...styles.windowButtonGroup,
-          ...isMaximized && { paddingRight: 0 },
-        }}
-        >
-          <WindowButton
-            srcSet={getSrcSetForButton('min')}
-            onHoverStyle={styles.windowButtonHover}
-            onActiveStyle={styles.windowButtonActive}
-            onClick={() => window.minimize()}
-          />
+        <div style={
           {
-            isMaximized
-              ? (
-                <WindowButton
-                  srcSet={getSrcSetForButton('restore')}
-                  onHoverStyle={styles.windowButtonHover}
-                  onActiveStyle={styles.windowButtonActive}
-                  onClick={() => {
-                    window.unmaximize();
-                    setIsMaximized(false);
-                  }}
-                />
-              ) : (
-                <WindowButton
-                  srcSet={getSrcSetForButton('max')}
-                  onHoverStyle={styles.windowButtonHover}
-                  onActiveStyle={styles.windowButtonActive}
-                  onClick={() => {
-                    window.maximize();
-                    setIsMaximized(true);
-                  }}
-                />
-              )
+            ...styles.draggableRegion,
+            ...isMaximized ? styles.draggableRegionMaximized : styles.draggableRegionNotMaximized,
           }
-          <WindowButton
-            srcSet={getSrcSetForButton('close')}
-            onHoverStyle={styles.closeButtonHover}
-            onActiveStyle={styles.closeButtonActive}
-            onClick={() => window.close()}
-          />
+        }
+        >
+          <div style={{
+            ...styles.inverseContainer,
+            ...isMaximized ? { margin: 0 } : { margin: -4 },
+          }}
+          >
+            <div style={styles.titleText}>
+              {titleText}
+            </div>
+            <div style={styles.windowButtonGroup}>
+              <WindowButton
+                srcSet={getSrcSetForButton('min')}
+                onHoverStyle={styles.windowButtonHover}
+                onActiveStyle={styles.windowButtonActive}
+                onClick={() => window.minimize()}
+              />
+              {
+                isMaximized
+                  ? (
+                    <WindowButton
+                      srcSet={getSrcSetForButton('restore')}
+                      onHoverStyle={styles.windowButtonHover}
+                      onActiveStyle={styles.windowButtonActive}
+                      onClick={() => {
+                        window.unmaximize();
+                        setIsMaximized(false);
+                      }}
+                    />
+                  ) : (
+                    <WindowButton
+                      srcSet={getSrcSetForButton('max')}
+                      onHoverStyle={styles.windowButtonHover}
+                      onActiveStyle={styles.windowButtonActive}
+                      onClick={() => {
+                        window.maximize();
+                        setIsMaximized(true);
+                      }}
+                    />
+                  )
+              }
+              <WindowButton
+                srcSet={getSrcSetForButton('close')}
+                onHoverStyle={styles.closeButtonHover}
+                onActiveStyle={styles.closeButtonActive}
+                onClick={() => window.close()}
+              />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
     )
   );
 }
@@ -102,6 +101,12 @@ function getSrcSetForButton(name) {
   return `${w10} 1x, ${w12} 1.25x, ${w15} 1.5x, ${w15} 1.75x, ${w20} 2x, ${w20} 2.25x, ${w24} 2.5x, ${w30} 3x, ${w20} 3.5x`;
 }
 const styles = {
+  inverseContainer: {
+    display: 'flex',
+    flexGrow: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   closeButtonActive: {
     backgroundColor: '#F1707A',
   },
@@ -115,28 +120,17 @@ const styles = {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   container: {
-    height: 32,
-    width: '100%',
     display: 'flex',
+    flexGrow: 1,
     backgroundColor: 'black',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-  overlayLayout: {
-    height: 32,
-    width: '100%',
   },
   draggableRegion: {
     WebkitAppRegion: 'drag',
-    flexGrow: 1,
-    heigth: '100%',
     display: 'flex',
+    flexGrow: 1,
     flexDirection: 'row',
     alignItems: 'center',
     zIndex: 1,
-    top: 0,
-    left: 0,
   },
   draggableRegionNotMaximized: {
     margin: 4,
