@@ -49,16 +49,14 @@ const styles = {
     backgroundColor: 'transparent',
     padding: 8,
     margin: 4,
-    display: 'inline-block',
-    height: 30,
   },
   enabledButton: {
     cursor: 'pointer',
   },
   mediaControlButtonImage: {
     width: 30,
-    maxHeight: '100%',
-    filter: 'invert(90%)',
+    display: 'block',
+    filter: 'invert(90%)', // remove img in div bottom space
   },
   mediaControlButtonImageHover: {
     filter: 'invert(100%)',

@@ -178,6 +178,7 @@ const styles = {
     flexDirection: 'column',
     WebkitAppRegion: 'no-drag',
     width: '100%',
+    zIndex: 2,
   },
   styleContainer: {
     margin: 20,
