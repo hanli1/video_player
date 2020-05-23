@@ -6,23 +6,26 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/media-has-caption */
 import React, {
-  useState, useEffect, useRef,
+  useState, useRef,
 } from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 import { CSSTransition } from 'react-transition-group';
 import MediaControlButton from './MediaControlButton';
-
 import './MediaControl.css';
 
-const { remote } = window.require('electron');
-
 MediaControl.propTypes = {
-  videoRef: PropTypes.object.isRequired,
-  onVideoSelect: PropTypes.func.isRequired,
   hidden: PropTypes.bool.isRequired,
+  onVideoSelectClicked: PropTypes.func.isRequired,
   isVideoPlaying: PropTypes.bool.isRequired,
+  isVideoMuted: PropTypes.bool.isRequired,
+  isVideoLoaded: PropTypes.bool.isRequired,
+  currentTime: PropTypes.number.isRequired,
+  videoDuration: PropTypes.number.isRequired,
+  toggleVideoMuted: PropTypes.func.isRequired,
   onPlayButtonClicked: PropTypes.func.isRequired,
+  seekTo: PropTypes.func.isRequired,
+  toggleFullScreen: PropTypes.func.isRequired,
   setIsMouseInControl: PropTypes.func.isRequired,
 };
 
@@ -30,77 +33,26 @@ const NORMAL_PROGRESS_BAR_HEIGHT = 5;
 const HOVER_SEEK_PROGRESS_BAR_HEIGHT = 10;
 
 function MediaControl({
-  videoRef,
-  onVideoSelect,
   hidden,
+  onVideoSelectClicked,
   isVideoPlaying,
+  isVideoMuted,
+  isVideoLoaded,
+  currentTime,
+  videoDuration,
   onPlayButtonClicked,
+  toggleVideoMuted,
+  seekTo,
+  toggleFullScreen,
   setIsMouseInControl,
 }) {
-  const [isVideoMuted, setIsVideoMuted] = useState(false);
-  const [currentTime, setCurrentTime] = useState(null);
-  const [videoDuration, setVideoDuration] = useState(null);
-
   const [isUserSeeking, setIsUserSeeking] = useState(false);
-  const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
   const [progressBarHeight, setProgressBarHeight] = useState(NORMAL_PROGRESS_BAR_HEIGHT);
   const [isMouseInProgressBar, setIsMouseInProgressBar] = useState(false);
 
   const progressBarRef = useRef(null);
 
-  const isVideoLoaded = videoRef.current != null && videoRef.current.currentSrc !== '';
-
-  useEffect(
-    () => {
-      videoRef.current.addEventListener('timeupdate', (e) => {
-        setCurrentTime(e.srcElement.currentTime);
-        if (!Number.isNaN(e.srcElement.duration)) {
-          setVideoDuration(e.srcElement.duration);
-        }
-        setCurrentProgressPercentage((e.srcElement.currentTime / e.srcElement.duration) * 100);
-      });
-      videoRef.current.addEventListener('loadeddata', (e) => {
-        setCurrentTime(e.srcElement.currentTime);
-        if (!Number.isNaN(e.srcElement.duration)) {
-          setVideoDuration(e.srcElement.duration);
-        }
-      });
-    },
-    [],
-  );
-
-  useEffect(() => {
-    const win = remote.getCurrentWindow();
-
-    const listeners = [];
-    listeners.push((event) => {
-      if (event.keyCode === 70) {
-        toggleFullScreen();
-      }
-      if (event.keyCode === 37) {
-        videoRef.current.currentTime -= 5;
-      }
-      if (event.keyCode === 39) {
-        videoRef.current.currentTime += 5;
-      }
-      if (event.keyCode === 32) {
-        onPlayButtonClicked();
-      }
-      if (event.keyCode === 27) {
-        win.setFullScreen(false);
-      }
-    });
-    listeners.forEach((listener) => window.addEventListener('keydown', listener));
-    return () => {
-      listeners.forEach((listener) => window.removeEventListener('keydown', listener));
-    };
-  }, [isVideoPlaying, remote]);
-
-  const seekTo = (seekToVideoPercentage) => {
-    if (isVideoLoaded && !videoRef.current.seeking) {
-      videoRef.current.currentTime = (seekToVideoPercentage / 100 * videoRef.current.duration);
-    }
-  };
+  const currentProgressPercentage = (currentTime / videoDuration) * 100;
 
   const progressBarMouseEventToVideoPercentage = (e) => e.nativeEvent.offsetX / e.currentTarget.getBoundingClientRect().width * 100;
   const areaListenerMouseEventToVideoPercentage = (e) => {
@@ -113,24 +65,6 @@ function MediaControl({
     const m = Math.round(seconds / 60);
     const s = Math.round(seconds % 60);
     return `${m}:${s >= 10 ? s : (`0${s}`)}`;
-  };
-
-  const toggleVideoMuted = () => {
-    if (!isVideoLoaded) {
-      return;
-    }
-    if (isVideoMuted) {
-      videoRef.current.muted = false;
-      setIsVideoMuted(false);
-    } else {
-      videoRef.current.muted = true;
-      setIsVideoMuted(true);
-    }
-  };
-
-  const toggleFullScreen = () => {
-    const win = remote.getCurrentWindow();
-    win.setFullScreen(!win.isFullScreen());
   };
 
   return (
@@ -148,7 +82,7 @@ function MediaControl({
           <div
             style={{
               ...styles.mouseListenerLayer,
-              ...isUserSeeking ? styles.mouseListenerLayerActive : {},
+              ...isUserSeeking ? styles.mouseListenerLayerActive : null,
             }}
             onMouseMove={(e) => {
               if (isUserSeeking) {
@@ -199,16 +133,16 @@ function MediaControl({
             <MediaControlButton
               imageName={isVideoPlaying ? 'pausebutton.png' : 'playbutton.png'}
               onClick={onPlayButtonClicked}
-              disabled={isVideoLoaded}
+              disabled={!isVideoLoaded}
             />
             <MediaControlButton
               imageName="selectfilebutton.png"
-              onClick={onVideoSelect}
+              onClick={onVideoSelectClicked}
             />
             <MediaControlButton
               imageName={isVideoMuted ? 'soundmuted.png' : 'soundon.png'}
               onClick={toggleVideoMuted}
-              disabled={isVideoLoaded}
+              disabled={!isVideoLoaded}
             />
             <div style={styles.timeText}>
               <span>
@@ -218,7 +152,7 @@ function MediaControl({
             </div>
             <MediaControlButton
               imageName="playlistbutton.png"
-              onClick={onVideoSelect}
+              onClick={onVideoSelectClicked}
             />
             <MediaControlButton
               imageName="fullscreenbutton.png"

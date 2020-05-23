@@ -10,6 +10,7 @@ import { useDropzone } from 'react-dropzone';
 import Titlebar from './Titlebar';
 import MediaControl from './MediaControl';
 
+const { remote } = window.require('electron');
 const { dialog } = window.require('electron').remote;
 const { ipcRenderer } = window.require('electron');
 const { basename } = window.require('path');
@@ -19,15 +20,38 @@ function App() {
   const videoRef = useRef(null);
   const [currentVideoPath, setCurrentVideoPath] = useState(null);
   const [countDown, setCountDown] = useState(COUNT_DOWN_SECONDS);
+
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isVideoMuted, setIsVideoMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(null);
+  const [videoDuration, setVideoDuration] = useState(null);
+
   const [isMouseInControl, setIsMouseInControl] = useState(false);
 
-  useEffect(() => {
-    const filePath = ipcRenderer.sendSync('get-file-data');
-    if (filePath !== null && filePath !== '.') {
-      setCurrentVideoPath(filePath);
-    }
-  }, []);
+  const isVideoLoaded = videoRef.current != null && videoRef.current.currentSrc !== '';
+
+  useEffect(
+    () => {
+      const filePath = ipcRenderer.sendSync('get-file-data');
+      if (filePath !== null && filePath !== '.') {
+        setCurrentVideoPath(filePath);
+      }
+
+      videoRef.current.addEventListener('timeupdate', (e) => {
+        setCurrentTime(e.srcElement.currentTime);
+        if (!Number.isNaN(e.srcElement.duration)) {
+          setVideoDuration(e.srcElement.duration);
+        }
+      });
+      videoRef.current.addEventListener('loadeddata', (e) => {
+        setCurrentTime(e.srcElement.currentTime);
+        if (!Number.isNaN(e.srcElement.duration)) {
+          setVideoDuration(e.srcElement.duration);
+        }
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     const listeners = [];
@@ -41,6 +65,33 @@ function App() {
       listeners.forEach((listener) => window.removeEventListener('keydown', listener));
     };
   }, []);
+
+  useEffect(() => {
+    const win = remote.getCurrentWindow();
+
+    const listeners = [];
+    listeners.push((event) => {
+      if (event.keyCode === 70) {
+        toggleFullScreen();
+      }
+      if (event.keyCode === 37) {
+        videoRef.current.currentTime -= 5;
+      }
+      if (event.keyCode === 39) {
+        videoRef.current.currentTime += 5;
+      }
+      if (event.keyCode === 32) {
+        onPlayButtonClicked();
+      }
+      if (event.keyCode === 27) {
+        win.setFullScreen(false);
+      }
+    });
+    listeners.forEach((listener) => window.addEventListener('keydown', listener));
+    return () => {
+      listeners.forEach((listener) => window.removeEventListener('keydown', listener));
+    };
+  }, [isVideoPlaying, remote]);
 
   useEffect(() => {
     let interval = null;
@@ -61,8 +112,8 @@ function App() {
     setCurrentVideoPath(files.filePaths[0]);
   };
 
-  const onPlayButtonClicked = useCallback(() => {
-    if (videoRef.current.currentSrc === '') {
+  const onPlayButtonClicked = () => {
+    if (!isVideoLoaded) {
       return;
     }
     if (!isVideoPlaying) {
@@ -72,14 +123,38 @@ function App() {
       setIsVideoPlaying(false);
       videoRef.current.pause();
     }
-  }, [isVideoPlaying]);
+  };
+
+  const toggleVideoMuted = () => {
+    if (!isVideoLoaded) {
+      return;
+    }
+    if (isVideoMuted) {
+      videoRef.current.muted = false;
+      setIsVideoMuted(false);
+    } else {
+      videoRef.current.muted = true;
+      setIsVideoMuted(true);
+    }
+  };
+
+  const seekTo = (seekToVideoPercentage) => {
+    if (isVideoLoaded && !videoRef.current.seeking) {
+      videoRef.current.currentTime = (seekToVideoPercentage / 100 * videoRef.current.duration);
+    }
+  };
+
+  const toggleFullScreen = () => {
+    const win = remote.getCurrentWindow();
+    win.setFullScreen(!win.isFullScreen());
+  };
 
   const onDropAccepted = useCallback((acceptedFiles) => {
     setCurrentVideoPath(acceptedFiles[0].path);
   }, []);
   const { getRootProps, getInputProps } = useDropzone({ accept: 'video/mp4', onDropAccepted });
-
   const shouldHideMouseAndControls = countDown === 0 && isVideoPlaying && !isMouseInControl;
+
   return (
     <>
       <div
@@ -101,9 +176,16 @@ function App() {
           <MediaControl
             hidden={shouldHideMouseAndControls}
             videoRef={videoRef}
-            onVideoSelect={onVideoSelect}
+            onVideoSelectClicked={onVideoSelect}
             isVideoPlaying={isVideoPlaying}
+            isVideoMuted={isVideoMuted}
+            isVideoLoaded={isVideoLoaded}
+            currentTime={currentTime}
+            videoDuration={videoDuration}
+            toggleVideoMuted={toggleVideoMuted}
             onPlayButtonClicked={onPlayButtonClicked}
+            seekTo={seekTo}
+            toggleFullScreen={toggleFullScreen}
             setIsMouseInControl={setIsMouseInControl}
           />
         </div>
