@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/media-has-caption */
 import React, {
   useState, useRef, useEffect, useCallback,
@@ -13,9 +16,9 @@ const { basename } = window.require('path');
 
 const COUNT_DOWN_SECONDS = 2;
 function App() {
+  const videoRef = useRef(null);
   const [currentVideoPath, setCurrentVideoPath] = useState(null);
   const [countDown, setCountDown] = useState(COUNT_DOWN_SECONDS);
-  const videoRef = useRef(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isMouseInControl, setIsMouseInControl] = useState(false);
 
@@ -38,7 +41,6 @@ function App() {
       listeners.forEach((listener) => window.removeEventListener('keydown', listener));
     };
   }, []);
-
 
   useEffect(() => {
     let interval = null;
@@ -87,6 +89,7 @@ function App() {
         }}
         onMouseMove={() => { setCountDown(COUNT_DOWN_SECONDS); }}
         onClick={() => { setCountDown(COUNT_DOWN_SECONDS); }}
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...getRootProps()}
       >
         <Titlebar titleText={currentVideoPath === null ? 'Video Player' : basename(currentVideoPath)} />

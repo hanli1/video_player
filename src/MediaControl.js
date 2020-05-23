@@ -37,17 +37,18 @@ function MediaControl({
   onPlayButtonClicked,
   setIsMouseInControl,
 }) {
-  const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
-  const [isUserSeeking, setIsUserSeeking] = useState(false);
-  const [progressBarHeight, setProgressBarHeight] = useState(NORMAL_PROGRESS_BAR_HEIGHT);
-  const [isMouseInProgressBar, setIsMouseInProgressBar] = useState(false);
-
+  const [isVideoMuted, setIsVideoMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(null);
   const [videoDuration, setVideoDuration] = useState(null);
 
-  const [isVideoMuted, setIsVideoMuted] = useState(false);
+  const [isUserSeeking, setIsUserSeeking] = useState(false);
+  const [currentProgressPercentage, setCurrentProgressPercentage] = useState(0);
+  const [progressBarHeight, setProgressBarHeight] = useState(NORMAL_PROGRESS_BAR_HEIGHT);
+  const [isMouseInProgressBar, setIsMouseInProgressBar] = useState(false);
 
   const progressBarRef = useRef(null);
+
+  const isVideoLoaded = videoRef.current != null && videoRef.current.currentSrc !== '';
 
   useEffect(
     () => {
@@ -67,20 +68,6 @@ function MediaControl({
     },
     [],
   );
-
-  const seekTo = (seekToVideoPercentage) => {
-    if (videoRef.current.currentSrc !== '' && !videoRef.current.seeking) {
-      videoRef.current.currentTime = (seekToVideoPercentage / 100 * videoRef.current.duration);
-    }
-  };
-
-  const progressBarMouseEventToVideoPercentage = (e) => e.nativeEvent.offsetX / e.currentTarget.getBoundingClientRect().width * 100;
-  const areaListenerMouseEventToVideoPercentage = (e) => {
-    const progressBarX = progressBarRef.current.getBoundingClientRect().x;
-    const percentage = Math.max(e.nativeEvent.offsetX - progressBarX, 0) / progressBarRef.current.getBoundingClientRect().width * 100;
-    return Math.min(percentage, 100);
-  };
-
 
   useEffect(() => {
     const win = remote.getCurrentWindow();
@@ -109,15 +96,27 @@ function MediaControl({
     };
   }, [isVideoPlaying, remote]);
 
+  const seekTo = (seekToVideoPercentage) => {
+    if (isVideoLoaded && !videoRef.current.seeking) {
+      videoRef.current.currentTime = (seekToVideoPercentage / 100 * videoRef.current.duration);
+    }
+  };
+
+  const progressBarMouseEventToVideoPercentage = (e) => e.nativeEvent.offsetX / e.currentTarget.getBoundingClientRect().width * 100;
+  const areaListenerMouseEventToVideoPercentage = (e) => {
+    const progressBarX = progressBarRef.current.getBoundingClientRect().x;
+    const percentage = Math.max(e.nativeEvent.offsetX - progressBarX, 0) / progressBarRef.current.getBoundingClientRect().width * 100;
+    return Math.min(percentage, 100);
+  };
+
   const secToMin = (seconds) => {
     const m = Math.round(seconds / 60);
     const s = Math.round(seconds % 60);
-
     return `${m}:${s >= 10 ? s : (`0${s}`)}`;
   };
 
   const toggleVideoMuted = () => {
-    if (videoRef.current.currentSrc === '') {
+    if (!isVideoLoaded) {
       return;
     }
     if (isVideoMuted) {
@@ -200,7 +199,7 @@ function MediaControl({
             <MediaControlButton
               imageName={isVideoPlaying ? 'pausebutton.png' : 'playbutton.png'}
               onClick={onPlayButtonClicked}
-              disabled={videoRef.current == null || videoRef.current.currentSrc === ''}
+              disabled={isVideoLoaded}
             />
             <MediaControlButton
               imageName="selectfilebutton.png"
@@ -209,7 +208,7 @@ function MediaControl({
             <MediaControlButton
               imageName={isVideoMuted ? 'soundmuted.png' : 'soundon.png'}
               onClick={toggleVideoMuted}
-              disabled={videoRef.current == null || videoRef.current.currentSrc === ''}
+              disabled={isVideoLoaded}
             />
             <div style={styles.timeText}>
               <span>
