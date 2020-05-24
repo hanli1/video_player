@@ -16,12 +16,14 @@ Playlist.propTypes = {
   isFullScreen: PropTypes.bool.isRequired,
   isOpen: PropTypes.string.isRequired,
   onVideoSelected: PropTypes.func.isRequired,
+  setIsMouseInControl: PropTypes.func.isRequired,
 };
 
 function Playlist({
   isFullScreen,
   isOpen,
   onVideoSelected,
+  setIsMouseInControl,
 }) {
   const [openedDirectory, setOpenedDirectory] = useState(null);
   useEffect(() => {
@@ -54,6 +56,8 @@ function Playlist({
           ...styles.playlist,
           ...isFullScreen && styles.fullScreen,
         }}
+        onMouseOver={() => setIsMouseInControl(true)}
+        onMouseLeave={() => setIsMouseInControl(false)}
       >
         <Button
           fluid
@@ -95,6 +99,7 @@ function Playlist({
 }
 const styles = {
   playlist: {
+    backgroundColor: 'rgba(27, 28, 29, 0.8)',
     margin: 0,
     width: 400,
     top: 32,

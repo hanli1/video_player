@@ -177,11 +177,12 @@ function App() {
           <Titlebar titleText={currentVideoPath === null ? 'Video Player' : basename(currentVideoPath)} />
           <Playlist
             isFullScreen={remote.getCurrentWindow().isFullScreen()}
-            isOpen={isPlaylistOpen}
+            isOpen={isPlaylistOpen && !shouldHideMouseAndControls}
             onVideoSelected={(videoPath) => {
               setCurrentVideoPath(videoPath);
               setIsPlayListOpen(false);
             }}
+            setIsMouseInControl={setIsMouseInControl}
           />
           <video ref={videoRef} src={currentVideoPath} type="video/mp4" style={styles.video} onClick={onPlayButtonClicked} />
           <MediaControl
