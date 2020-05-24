@@ -7,14 +7,15 @@ let macVideoPath = null;
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
     frame: false,
-    backgroundColor: 'black',
+    backgroundColor: '#000000',
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
     },
+    // show: false,
   });
 
   win.loadURL(
@@ -29,8 +30,9 @@ function createWindow() {
     win.webContents.openDevTools();
   }
 
-  win.once('did-finish-load', () => {
+  win.once('ready-to-show', () => {
     win.show();
+    win.focus();
   });
 
   // read the file and send data to the render process
