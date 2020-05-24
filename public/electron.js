@@ -15,7 +15,7 @@ function createWindow() {
       nodeIntegration: true,
       webSecurity: false,
     },
-    // show: false,
+    show: false,
   });
 
   win.loadURL(
