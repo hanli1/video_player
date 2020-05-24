@@ -175,7 +175,14 @@ function App() {
           style={styles.dragDropZone}
         >
           <Titlebar titleText={currentVideoPath === null ? 'Video Player' : basename(currentVideoPath)} />
-          <Playlist isOpen={isPlaylistOpen} setCurrentVideoPath={setCurrentVideoPath} />
+          <Playlist
+            isFullScreen={remote.getCurrentWindow().isFullScreen()}
+            isOpen={isPlaylistOpen}
+            onVideoSelected={(videoPath) => {
+              setCurrentVideoPath(videoPath);
+              setIsPlayListOpen(false);
+            }}
+          />
           <video ref={videoRef} src={currentVideoPath} type="video/mp4" style={styles.video} onClick={onPlayButtonClicked} />
           <MediaControl
             hidden={shouldHideMouseAndControls}

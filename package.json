@@ -31,7 +31,7 @@
     "@testing-library/user-event": "^7.2.1",
     "cross-env": "^7.0.2",
     "electron-is-dev": "^1.2.0",
-    "framer-motion": "^1.11.0",
+    "electron-store": "^5.1.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-animate-height": "^2.0.21",

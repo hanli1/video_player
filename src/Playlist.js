@@ -1,66 +1,84 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { motion } from 'framer-motion';
-import { Button, List, Segment } from 'semantic-ui-react';
+import {
+  Button, List, Segment, Transition,
+} from 'semantic-ui-react';
 
 const { dialog } = window.require('electron').remote;
 const fs = window.require('fs');
 const path = window.require('path');
+const Store = window.require('electron-store');
+
+const store = new Store();
 
 Playlist.propTypes = {
+  isFullScreen: PropTypes.bool.isRequired,
   isOpen: PropTypes.string.isRequired,
-  setCurrentVideoPath: PropTypes.func.isRequired,
+  onVideoSelected: PropTypes.func.isRequired,
 };
 
 function Playlist({
+  isFullScreen,
   isOpen,
-  setCurrentVideoPath,
+  onVideoSelected,
 }) {
-  const [filesData, setFilesData] = useState([]);
+  const [openedDirectory, setOpenedDirectory] = useState(null);
+  useEffect(() => {
+    const playlistDirectory = store.get('playlistDirectory');
+    if (playlistDirectory !== undefined) {
+      setOpenedDirectory(playlistDirectory);
+    }
+  }, []);
+
+  const getFilesFromFolderPath = (folderPath) => {
+    if (folderPath === null) {
+      return [];
+    }
+    return fs.readdirSync(folderPath).map((file) => ({
+      name: file,
+      path: path.resolve(folderPath, file),
+    }));
+  };
+
   return (
-    <motion.div
-      style={styles.playlist}
-      animate={isOpen ? 'open' : 'closed'}
-      variants={{
-        closed: {
-          opacity: 0,
-          x: 100,
-        },
-        open: {
-          opacity: 1,
-          x: 0,
-        },
-      }}
-      transition={{ duration: 0.25 }}
+    <Transition
+      visible={isOpen}
+      animation="fade left"
+      duration={250}
     >
-      <Segment inverted textAlign="left">
+      <Segment
+        inverted
+        fluid
+        style={{
+          ...styles.playlist,
+          ...isFullScreen && styles.fullScreen,
+        }}
+      >
         <Button
+          fluid
           inverted
           onClick={async () => {
             const o = await dialog.showOpenDialog({ properties: ['openDirectory'] });
             if (o.filePaths.length === 0) {
+              store.delete('playlistDirectory');
               return;
             }
             const folderPath = o.filePaths[0];
-            fs.readdir(folderPath, (err, files) => {
-              setFilesData(files.map((file) => ({
-                name: file,
-                path: path.resolve(folderPath, file),
-              })));
-            });
+            setOpenedDirectory(folderPath);
+            store.set('playlistDirectory', folderPath);
           }}
         >
           Select Directory
         </Button>
-        {filesData.length !== 0
+        {openedDirectory !== null
           && (
           <List selection divided inverted relaxed>
             {
-            filesData.map((fileData) => (
+            getFilesFromFolderPath(openedDirectory).map((fileData) => (
               <List.Item
                 key={fileData.path}
-                onClick={() => setCurrentVideoPath(fileData.path)}
+                onClick={() => onVideoSelected(fileData.path)}
               >
                 <List.Content>
                   <List.Header>{fileData.name}</List.Header>
@@ -72,19 +90,23 @@ function Playlist({
           </List>
           )}
       </Segment>
-    </motion.div>
+    </Transition>
   );
 }
 const styles = {
   playlist: {
+    margin: 0,
     width: 400,
     top: 32,
     bottom: 84,
     position: 'absolute',
     right: 0,
-    backgroundColor: 'black',
     zIndex: 1,
-    overflow: 'auto',
+    overflowY: 'scroll',
+    overflowX: 'hidden',
+  },
+  fullScreen: {
+    top: 0,
   },
 };
 
