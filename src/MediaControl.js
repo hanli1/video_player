@@ -28,6 +28,7 @@ MediaControl.propTypes = {
   toggleFullScreen: PropTypes.func.isRequired,
   setIsMouseInControl: PropTypes.func.isRequired,
   togglePlaylist: PropTypes.func.isRequired,
+  isPlaylistOpen: PropTypes.bool.isRequired,
 };
 
 const NORMAL_PROGRESS_BAR_HEIGHT = 5;
@@ -47,6 +48,7 @@ function MediaControl({
   toggleFullScreen,
   setIsMouseInControl,
   togglePlaylist,
+  isPlaylistOpen,
 }) {
   const [isUserSeeking, setIsUserSeeking] = useState(false);
   const [progressBarHeight, setProgressBarHeight] = useState(NORMAL_PROGRESS_BAR_HEIGHT);
@@ -76,94 +78,100 @@ function MediaControl({
       timeout={250}
       classNames="media-control-anim"
     >
-      <div
-        style={styles.container}
-        onMouseOver={() => setIsMouseInControl(true)}
-        onMouseLeave={() => setIsMouseInControl(false)}
+      <CSSTransition
+        in={isPlaylistOpen}
+        timeout={250}
+        classNames="playlist-color"
       >
-        <div style={styles.styleContainer}>
-          <div
-            style={{
-              ...styles.mouseListenerLayer,
-              ...isUserSeeking ? styles.mouseListenerLayerActive : null,
-            }}
-            onMouseMove={(e) => {
-              if (isUserSeeking) {
-                setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
-                seekTo(areaListenerMouseEventToVideoPercentage(e));
-              }
-            }}
-            onMouseUp={() => {
-              if (!isMouseInProgressBar) {
-                setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
-              }
-              setIsUserSeeking(false);
-            }}
-          />
-          <AnimateHeight duration={250} height={progressBarHeight}>
+        <div
+          style={styles.container}
+          onMouseOver={() => setIsMouseInControl(true)}
+          onMouseLeave={() => setIsMouseInControl(false)}
+        >
+          <div style={styles.styleContainer}>
             <div
-              ref={progressBarRef}
-              style={styles.progressBar}
-              onMouseOver={() => {
-                setIsMouseInProgressBar(true);
-                setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
-              }}
-              onMouseOut={() => {
-                setIsMouseInProgressBar(false);
-                setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
-              }}
-              onMouseDown={(e) => {
-                setIsUserSeeking(true);
-                seekTo(progressBarMouseEventToVideoPercentage(e));
+              style={{
+                ...styles.mouseListenerLayer,
+                ...isUserSeeking ? styles.mouseListenerLayerActive : null,
               }}
               onMouseMove={(e) => {
                 if (isUserSeeking) {
-                  seekTo(progressBarMouseEventToVideoPercentage(e));
+                  setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
+                  seekTo(areaListenerMouseEventToVideoPercentage(e));
                 }
               }}
               onMouseUp={() => {
+                if (!isMouseInProgressBar) {
+                  setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
+                }
                 setIsUserSeeking(false);
               }}
-            >
-              <div style={{
-                ...styles.currentProgressBar,
-                ...{ width: `${currentProgressPercentage}%` },
-              }}
+            />
+            <AnimateHeight duration={250} height={progressBarHeight}>
+              <div
+                ref={progressBarRef}
+                style={styles.progressBar}
+                onMouseOver={() => {
+                  setIsMouseInProgressBar(true);
+                  setProgressBarHeight(HOVER_SEEK_PROGRESS_BAR_HEIGHT);
+                }}
+                onMouseOut={() => {
+                  setIsMouseInProgressBar(false);
+                  setProgressBarHeight(NORMAL_PROGRESS_BAR_HEIGHT);
+                }}
+                onMouseDown={(e) => {
+                  setIsUserSeeking(true);
+                  seekTo(progressBarMouseEventToVideoPercentage(e));
+                }}
+                onMouseMove={(e) => {
+                  if (isUserSeeking) {
+                    seekTo(progressBarMouseEventToVideoPercentage(e));
+                  }
+                }}
+                onMouseUp={() => {
+                  setIsUserSeeking(false);
+                }}
+              >
+                <div style={{
+                  ...styles.currentProgressBar,
+                  ...{ width: `${currentProgressPercentage}%` },
+                }}
+                />
+              </div>
+            </AnimateHeight>
+            <div style={styles.controlsContainer}>
+              <MediaControlButton
+                imageName={isVideoPlaying ? 'pausebutton.png' : 'playbutton.png'}
+                onClick={onPlayButtonClicked}
+                disabled={!isVideoLoaded}
+              />
+              <MediaControlButton
+                imageName="selectfilebutton.png"
+                onClick={onVideoSelectClicked}
+              />
+              <MediaControlButton
+                imageName={isVideoMuted ? 'soundmuted.png' : 'soundon.png'}
+                onClick={toggleVideoMuted}
+                disabled={!isVideoLoaded}
+              />
+              <div style={styles.timeText}>
+                <span>
+                  {currentTime !== null && videoDuration !== null
+                && `${secToMin(currentTime)} / ${secToMin(videoDuration)}`}
+                </span>
+              </div>
+              <MediaControlButton
+                imageName="playlistbutton.png"
+                onClick={togglePlaylist}
+              />
+              <MediaControlButton
+                imageName="fullscreenbutton.png"
+                onClick={toggleFullScreen}
               />
             </div>
-          </AnimateHeight>
-          <div style={styles.controlsContainer}>
-            <MediaControlButton
-              imageName={isVideoPlaying ? 'pausebutton.png' : 'playbutton.png'}
-              onClick={onPlayButtonClicked}
-              disabled={!isVideoLoaded}
-            />
-            <MediaControlButton
-              imageName="selectfilebutton.png"
-              onClick={onVideoSelectClicked}
-            />
-            <MediaControlButton
-              imageName={isVideoMuted ? 'soundmuted.png' : 'soundon.png'}
-              onClick={toggleVideoMuted}
-              disabled={!isVideoLoaded}
-            />
-            <div style={styles.timeText}>
-              <span>
-                {currentTime !== null && videoDuration !== null
-                && `${secToMin(currentTime)} / ${secToMin(videoDuration)}`}
-              </span>
-            </div>
-            <MediaControlButton
-              imageName="playlistbutton.png"
-              onClick={togglePlaylist}
-            />
-            <MediaControlButton
-              imageName="fullscreenbutton.png"
-              onClick={toggleFullScreen}
-            />
           </div>
         </div>
-      </div>
+      </CSSTransition>
     </CSSTransition>
   );
 }

@@ -2,24 +2,48 @@
     opacity: 1;
   }
   
-  .media-control-anim-enter-active {
-    opacity: 0;
-    transition: opacity 250ms ease-in;
-  }
-  .media-control-anim-enter-done {
-    opacity: 0;
-  }
-  
-  .media-control-anim-exit {
-    opacity: 0;
-  }
-  
-  .media-control-anim-exit-active {
-    opacity: 1;
-    transition: opacity 50ms ease-in;
-  }
-  .media-control-anim-exit-done {
-      opacity: 1;
-  }
+.media-control-anim-enter-active {
+  opacity: 0;
+  transition: opacity 250ms ease-in;
+}
+.media-control-anim-enter-done {
+  opacity: 0;
+}
 
-  
+.media-control-anim-exit {
+  opacity: 0;
+}
+
+.media-control-anim-exit-active {
+  opacity: 1;
+  transition: opacity 50ms ease-in;
+}
+.media-control-anim-exit-done {
+    opacity: 1;
+}
+
+
+.playlist-color-enter {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.playlist-color-enter-active {
+  background-color: rgba(27, 28, 29, 0.8);
+transition: background-color 250ms ease-in;
+}
+.playlist-color-enter-done {
+  background-color: rgba(27, 28, 29, 0.8);
+}
+
+.playlist-color-exit {
+  background-color: rgba(27, 28, 29, 0.8);
+}
+
+.playlist-color-exit-active {
+  background-color: rgba(0, 0, 0, 0);
+transition: background-color 250ms ease-in;
+}
+.playlist-color-exit-done {
+  background-color: rgba(0, 0, 0, 0);
+}
+

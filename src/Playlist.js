@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/mouse-events-have-key-events */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
@@ -103,7 +104,7 @@ const styles = {
     margin: 0,
     width: 400,
     top: 32,
-    bottom: 84,
+    bottom: 103,
     position: 'absolute',
     right: 0,
     zIndex: 1,

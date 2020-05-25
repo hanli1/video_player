@@ -29,12 +29,14 @@ function App() {
   const [videoDuration, setVideoDuration] = useState(null);
 
   const [isMouseInControl, setIsMouseInControl] = useState(false);
-  const [isPlaylistOpen, setIsPlayListOpen] = useState(true);
+  const [isPlaylistOpen, setIsPlayListOpen] = useState(false);
 
   const isVideoLoaded = videoRef.current != null && videoRef.current.currentSrc !== '';
 
   useEffect(
     () => {
+      // do it so react animation can set color on control bar
+      setIsPlayListOpen(true);
       const filePath = ipcRenderer.sendSync('get-file-data');
       if (filePath !== null && filePath !== '.') {
         setCurrentVideoPath(filePath);
@@ -202,6 +204,7 @@ function App() {
             togglePlaylist={() => {
               setIsPlayListOpen(!isPlaylistOpen);
             }}
+            isPlaylistOpen={isPlaylistOpen}
           />
         </div>
       </div>
