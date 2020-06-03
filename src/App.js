@@ -39,7 +39,7 @@ function App() {
       setIsPlayListOpen(true);
       const filePath = ipcRenderer.sendSync('get-file-data');
       if (filePath !== null && filePath !== '.') {
-        setCurrentVideoPath(filePath);
+        setCurrentVideoPathAndResetButtonStates(filePath);
       }
 
       videoRef.current.addEventListener('timeupdate', (e) => {
@@ -114,7 +114,7 @@ function App() {
     if (files.filePaths.length === 0) {
       return;
     }
-    setCurrentVideoPath(files.filePaths[0]);
+    setCurrentVideoPathAndResetButtonStates(files.filePaths[0]);
   };
 
   const onPlayButtonClicked = () => {
@@ -154,8 +154,15 @@ function App() {
     win.setFullScreen(!win.isFullScreen());
   };
 
+  const setCurrentVideoPathAndResetButtonStates = (videoPath) => {
+    if (currentVideoPath !== videoPath) {
+      setIsVideoPlaying(false);
+      setCurrentVideoPath(videoPath);
+    }
+  };
+
   const onDropAccepted = useCallback((acceptedFiles) => {
-    setCurrentVideoPath(acceptedFiles[0].path);
+    setCurrentVideoPathAndResetButtonStates(acceptedFiles[0].path);
   }, []);
   const { getRootProps, getInputProps } = useDropzone({ accept: 'video/mp4', onDropAccepted });
   const shouldHideMouseAndControls = countDown === 0 && isVideoPlaying && !isMouseInControl;
@@ -181,7 +188,7 @@ function App() {
             isFullScreen={remote.getCurrentWindow().isFullScreen()}
             isOpen={isPlaylistOpen && !shouldHideMouseAndControls}
             onVideoSelected={(videoPath) => {
-              setCurrentVideoPath(videoPath);
+              setCurrentVideoPathAndResetButtonStates(videoPath);
               setIsPlayListOpen(false);
             }}
             setIsMouseInControl={setIsMouseInControl}
