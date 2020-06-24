@@ -192,6 +192,7 @@ function App() {
               setIsPlayListOpen(false);
             }}
             setIsMouseInControl={setIsMouseInControl}
+            currentVideoPath={currentVideoPath}
           />
           <video ref={videoRef} src={currentVideoPath} type="video/mp4" style={styles.video} onClick={onPlayButtonClicked} />
           <MediaControl

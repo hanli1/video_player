@@ -18,6 +18,7 @@ Playlist.propTypes = {
   isOpen: PropTypes.string.isRequired,
   onVideoSelected: PropTypes.func.isRequired,
   setIsMouseInControl: PropTypes.func.isRequired,
+  currentVideoPath: PropTypes.string.isRequired,
 };
 
 function Playlist({
@@ -25,6 +26,7 @@ function Playlist({
   isOpen,
   onVideoSelected,
   setIsMouseInControl,
+  currentVideoPath,
 }) {
   const [openedDirectory, setOpenedDirectory] = useState(null);
   useEffect(() => {
@@ -80,17 +82,22 @@ function Playlist({
           && (
           <List selection divided inverted relaxed>
             {
-            getFilesFromFolderPath(openedDirectory).map((fileData) => (
-              <List.Item
-                key={fileData.path}
-                onClick={() => onVideoSelected(fileData.path)}
-              >
-                <List.Content>
-                  <List.Header>{fileData.name}</List.Header>
-                  {fileData.path}
-                </List.Content>
-              </List.Item>
-            ))
+            getFilesFromFolderPath(openedDirectory).map((fileData) => {
+              console.log(currentVideoPath);
+              console.log(fileData.path);
+              return (
+                <List.Item
+                  style={{ ...currentVideoPath === fileData.path && styles.currentVideoRow }}
+                  key={fileData.path}
+                  onClick={() => onVideoSelected(fileData.path)}
+                >
+                  <List.Content>
+                    <List.Header>{fileData.name}</List.Header>
+                    {fileData.path}
+                  </List.Content>
+                </List.Item>
+              );
+            })
           }
           </List>
           )}
@@ -113,6 +120,9 @@ const styles = {
   },
   fullScreen: {
     top: 0,
+  },
+  currentVideoRow: {
+    backgroundColor: '#303030',
   },
 };
 
