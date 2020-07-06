@@ -82,22 +82,18 @@ function Playlist({
           && (
           <List selection divided inverted relaxed>
             {
-            getFilesFromFolderPath(openedDirectory).map((fileData) => {
-              console.log(currentVideoPath);
-              console.log(fileData.path);
-              return (
-                <List.Item
-                  style={{ ...currentVideoPath === fileData.path && styles.currentVideoRow }}
-                  key={fileData.path}
-                  onClick={() => onVideoSelected(fileData.path)}
-                >
-                  <List.Content>
-                    <List.Header>{fileData.name}</List.Header>
-                    {fileData.path}
-                  </List.Content>
-                </List.Item>
-              );
-            })
+            getFilesFromFolderPath(openedDirectory).map((fileData) => (
+              <List.Item
+                style={{ ...currentVideoPath === fileData.path && styles.currentVideoRow }}
+                key={fileData.path}
+                onClick={() => onVideoSelected(fileData.path)}
+              >
+                <List.Content>
+                  <List.Header>{fileData.name}</List.Header>
+                  {fileData.path}
+                </List.Content>
+              </List.Item>
+            ))
           }
           </List>
           )}

@@ -85,8 +85,6 @@ function MediaControl({
       >
         <div
           style={styles.container}
-          onMouseOver={() => setIsMouseInControl(true)}
-          onMouseLeave={() => setIsMouseInControl(false)}
         >
           <div style={styles.styleContainer}>
             <div
@@ -107,7 +105,12 @@ function MediaControl({
                 setIsUserSeeking(false);
               }}
             />
-            <AnimateHeight duration={250} height={progressBarHeight}>
+            <AnimateHeight
+              duration={250}
+              height={progressBarHeight}
+              onMouseOver={() => setIsMouseInControl(true)}
+              onMouseLeave={() => setIsMouseInControl(false)}
+            >
               <div
                 ref={progressBarRef}
                 style={styles.progressBar}
